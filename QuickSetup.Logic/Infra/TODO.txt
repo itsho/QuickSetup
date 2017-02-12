@@ -1,0 +1,35 @@
+﻿
+* add field - FileHash (to check if existing file is exactly the one we are looking for)
+* add field - Last modified date,Pc\User
+
+* ability to install new lang
+* ability to set lang for non-unicode program or open this screen ("region")
+* file association window
+* default browser
+* windows activation status
+* auto refresh every X seconds
+* windows version at bottom + 86/64
+* find installed toolbars and display warning
+* chrome adblock?
+* ff adblock?
+* uac status + disable silent UAC with warning that Metro apps won't work
+
+    Browse to registry key HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System
+    Change EnableLUA to 0
+    Install Calculator that works on Non-Metro mode from oldcalcwin10_winaero.com_1995.zip (or http://winaero.com/download.php?view.1795)
+    Restart
+
+*  get public IP display at bottom
+*  Take ownership - install/uninstall
+* classic shell setup
+* Idea - generic RegKey to detect installed version. probably very hard
+* to display fake progress - check if setup file is in use
+* status field: 
+	> V - installed
+	> Blank - if not installed
+	> ! - if setup file is missing	
+	> ? - unknown issue
+
+* each app will have Checkbox, name, install button, edit button, Status field
+* at bottom, an expander with Log4net output will be availble.
+
