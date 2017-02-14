@@ -18,7 +18,7 @@ namespace QuickSetup.Logic.Infra
                 {
                     var strFileContent = File.ReadAllText(Constants.AppsFileFullPath);
                     var tempAppsList = Newtonsoft.Json.JsonConvert.DeserializeObject<List<SingleSoftwareModel>>(strFileContent);
-
+                    tempAppsList.Sort((x1, x2) => String.Compare(x1.SoftwareName, x2.SoftwareName, StringComparison.Ordinal));
                     return tempAppsList;
                 }
                 Logger.Log.Fatal("Unable to find AppsFile To load");

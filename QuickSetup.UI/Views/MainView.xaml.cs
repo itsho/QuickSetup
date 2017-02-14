@@ -1,10 +1,11 @@
-﻿using MahApps.Metro.Controls;
+﻿using GalaSoft.MvvmLight.Messaging;
+using MahApps.Metro.Controls;
 using QuickSetup.Logic.Infra;
 using QuickSetup.UI.ViewModel;
 using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using GalaSoft.MvvmLight.Messaging;
 using Xceed.Wpf.DataGrid;
 
 namespace QuickSetup.UI.Views
@@ -26,7 +27,7 @@ namespace QuickSetup.UI.Views
         {
             try
             {
-                Logger.Log.Info("Install button clicked");
+                Logger.Log.Debug("Install button clicked");
                 var cell = Cell.FindFromChild(p_sender as DependencyObject);
                 var singleApp = DataGridControl.GetDataGridContext(cell).GetItemFromContainer(cell.ParentRow) as SingleSoftwareViewModel;
 
@@ -45,7 +46,7 @@ namespace QuickSetup.UI.Views
         {
             try
             {
-                Logger.Log.Info("Edit button clicked");
+                Logger.Log.Debug("Edit button clicked");
                 var cell = Cell.FindFromChild(p_sender as DependencyObject);
                 var singleApp = DataGridControl.GetDataGridContext(cell).GetItemFromContainer(cell.ParentRow) as SingleSoftwareViewModel;
 
@@ -84,6 +85,36 @@ namespace QuickSetup.UI.Views
             catch (Exception ex)
             {
                 Logger.Log.Error("Error while mvvm message recieved", ex);
+            }
+        }
+
+        private void ButtonRemove_OnClick(object p_sender, RoutedEventArgs p_e)
+        {
+            try
+            {
+                Logger.Log.Debug("Remove button clicked");
+
+                var res = MessageBox.Show("Are you sure you want to remove the software?", Constants.APPLICATIONNAME,
+                    MessageBoxButton.YesNo);
+
+                if (res == MessageBoxResult.Yes)
+                {
+                    var cell = Cell.FindFromChild(p_sender as DependencyObject);
+                    var singleApp =
+                        DataGridControl.GetDataGridContext(cell).GetItemFromContainer(cell.ParentRow) as
+                            SingleSoftwareViewModel;
+
+                    var mvm = DataContext as MainViewModel;
+                    if (mvm != null)
+                    {
+                        mvm.SoftwareList.Remove(singleApp);
+                        mvm.SelectedSoftware = mvm.SoftwareList.FirstOrDefault();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log.Error("Error while trying to Remove software", ex);
             }
         }
     }
