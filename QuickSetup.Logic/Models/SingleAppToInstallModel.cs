@@ -50,7 +50,26 @@ namespace QuickSetup.Logic.Models
 
         public int CompareTo(SingleSoftwareModel other)
         {
-            throw new NotImplementedException();
+            Debugger.Break();
+            return 0;
+        }
+
+        public void CopyDataFrom(SingleSoftwareModel p_modelSource)
+        {
+            SoftwareName = p_modelSource.SoftwareName;
+            LangCodeIso6392 = p_modelSource.LangCodeIso6392;
+            NotesToolTip = p_modelSource.NotesToolTip;
+
+            ExistanceFilePath = p_modelSource.ExistanceFilePath;
+            ExistanceFileMd5Hash = p_modelSource.ExistanceFileMd5Hash;
+
+            ExistanceRegistryKey = p_modelSource.ExistanceRegistryKey;
+            ExistanceRegistryValue = p_modelSource.ExistanceRegistryValue;
+
+            SetupFolder = p_modelSource.SetupFolder;
+            SetupFileName = p_modelSource.SetupFileName;
+            SetupSilentParams = p_modelSource.SetupSilentParams;
+            IsMsiSetup = p_modelSource.IsMsiSetup;
         }
     }
 }

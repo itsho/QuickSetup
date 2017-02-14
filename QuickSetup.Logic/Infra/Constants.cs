@@ -13,5 +13,7 @@ namespace QuickSetup.Logic.Infra
         public static readonly string AppsFileFullPath =
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\" + APPLICATIONNAME + @"\" +
             APPS_FILE;
+
+        public const string MVVM_MESSAGE_SHOW_SINGLESOFTWAREVIEW = "SHOW_SINGLESOFTWAREVIEW";
     }
 }

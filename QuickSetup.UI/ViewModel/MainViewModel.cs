@@ -5,6 +5,7 @@ using QuickSetup.Logic.Infra;
 using QuickSetup.Logic.Models;
 using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -32,7 +33,8 @@ namespace QuickSetup.UI.ViewModel
 
         private StringBuilder _logbuilderToScreen = null;
         private string _strLogOutput;
-        private DispatcherTimer _tmrLogRefresh = new DispatcherTimer();
+        private readonly DispatcherTimer _tmrLogRefresh = new DispatcherTimer();
+        private SingleSoftwareViewModel _selectedSoftware;
 
         #endregion data members
 
@@ -43,19 +45,23 @@ namespace QuickSetup.UI.ViewModel
         /// </summary>
         public MainViewModel()
         {
-            ListOfApps = new ObservableCollection<SingleSoftwareViewModel>();
+            SoftwareList = new ObservableCollection<SingleSoftwareViewModel>();
             SaveAllApps = new RelayCommand(OnSaveAllApps);
             LoadAllApps = new RelayCommand(OnLoadAllApps);
+            AddNewAppCommand = new RelayCommand(OnAddNewAppCommand);
+            RemoveSelectedSoftwareCommand = new RelayCommand(OnRemoveSelectedSoftwareCommand);
 
             // Code runs in Blend --> create design time data.
             if (IsInDesignMode)
             {
+                #region design mode
+
                 var lstRandomName = Constants.LOREM_IPSUM.Split(' ');
                 var randGen = new Random();
 
                 for (int intTemp = 0; intTemp < 4; intTemp++)
                 {
-                    ListOfApps.Add(new SingleSoftwareViewModel(new SingleSoftwareModel()
+                    SoftwareList.Add(new SingleSoftwareViewModel(new SingleSoftwareModel()
                     {
                         SoftwareName = lstRandomName[randGen.Next(lstRandomName.Length)],
                         NotesToolTip = Constants.LOREM_IPSUM,
@@ -68,6 +74,8 @@ namespace QuickSetup.UI.ViewModel
                         SetupSilentParams = "/q"
                     }));
                 }
+
+                #endregion design mode
             }
             // Code runs "for real"
             else
@@ -76,7 +84,7 @@ namespace QuickSetup.UI.ViewModel
 
                 foreach (var singleModel in Dal.LoadAll())
                 {
-                    ListOfApps.Add(new SingleSoftwareViewModel(singleModel));
+                    SoftwareList.Add(new SingleSoftwareViewModel(singleModel));
                 }
             }
         }
@@ -85,11 +93,24 @@ namespace QuickSetup.UI.ViewModel
 
         #region Properties
 
-        public ObservableCollection<SingleSoftwareViewModel> ListOfApps { get; set; }
+        public ObservableCollection<SingleSoftwareViewModel> SoftwareList { get; set; }
+
+        public SingleSoftwareViewModel SelectedSoftware
+        {
+            get { return _selectedSoftware; }
+            set
+            {
+                Set(ref _selectedSoftware, value, nameof(SelectedSoftware));
+            }
+        }
 
         public ICommand SaveAllApps { get; private set; }
 
         public ICommand LoadAllApps { get; private set; }
+
+        public ICommand AddNewAppCommand { get; private set; }
+
+        public ICommand RemoveSelectedSoftwareCommand { get; private set; }
 
         public string LogOutputToWindow
         {
@@ -179,13 +200,56 @@ namespace QuickSetup.UI.ViewModel
 
         private void OnSaveAllApps()
         {
-            var tempListToSave = ListOfApps.Select(appVm => appVm.Model).ToList();
+            var tempListToSave = SoftwareList.Select(appVm => appVm.ClonedModel).ToList();
             Dal.SaveAll(tempListToSave);
         }
 
         private static void OnLoadAllApps()
         {
             Dal.LoadAll();
+        }
+
+        private void OnAddNewAppCommand()
+        {
+            try
+            {
+                var newSoft = new SingleSoftwareViewModel(new SingleSoftwareModel()
+                {
+                    SoftwareName = "New"
+                });
+
+                SoftwareList.Add(newSoft);
+
+                // TODO: scroll to selected item
+                Debugger.Break();
+                SelectedSoftware = newSoft;
+
+                // edit new soft
+                if (SelectedSoftware.EditSoftwareCommand.CanExecute(null))
+                {
+                    SelectedSoftware.EditSoftwareCommand.Execute(null);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log.Error("Error while adding new software", ex);
+            }
+        }
+
+        private void OnRemoveSelectedSoftwareCommand()
+        {
+            try
+            {
+                if (SelectedSoftware != null)
+                {
+                    SoftwareList.Remove(SelectedSoftware);
+                    SelectedSoftware = SoftwareList.FirstOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log.Error("Error while removing selected software", ex);
+            }
         }
 
         #endregion Private methods

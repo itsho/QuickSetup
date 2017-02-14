@@ -2,6 +2,7 @@
 	* add field - FileHash (to check if existing file is exactly the one we are looking for)
 	* Log4net output will be availble.
 	* fix grid row height - buttons are trimmed
+	* add two buttons to the top - "Add" and "Remove"
 
 
 TODO:
@@ -12,7 +13,6 @@ TODO:
 	> ! - if setup file is missing	
 	> ? - unknown issue
 
-* add two buttons to the top - "Add" and "Remove"
 * decide: "edit" and "remove" as buttons or as context menu?
 * add SingleApp window to show when Edit or Add button is clicked
 * each app will have Checkbox, name, install button, edit button, Status field
