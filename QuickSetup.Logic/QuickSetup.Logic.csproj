@@ -54,6 +54,7 @@
   <ItemGroup>
     <Compile Include="Infra\Constants.cs" />
     <Compile Include="Infra\Dal.cs" />
+    <Compile Include="Infra\Enums\AllEnums.cs" />
     <Compile Include="Infra\Logger.cs" />
     <Compile Include="Models\AppsListModel.cs" />
     <Compile Include="Models\SingleAppToInstallModel.cs" />

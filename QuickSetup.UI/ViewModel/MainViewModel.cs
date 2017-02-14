@@ -43,22 +43,21 @@ namespace QuickSetup.UI.ViewModel
         /// </summary>
         public MainViewModel()
         {
-            ListOfApps = new ObservableCollection<SingleAppToInstallViewModel>();
+            ListOfApps = new ObservableCollection<SingleSoftwareViewModel>();
             SaveAllApps = new RelayCommand(OnSaveAllApps);
             LoadAllApps = new RelayCommand(OnLoadAllApps);
 
             // Code runs in Blend --> create design time data.
             if (IsInDesignMode)
             {
-                Logger.Log.Error("MainViewModel ctor design time");
                 var lstRandomName = Constants.LOREM_IPSUM.Split(' ');
                 var randGen = new Random();
 
                 for (int intTemp = 0; intTemp < 4; intTemp++)
                 {
-                    ListOfApps.Add(new SingleAppToInstallViewModel(new SingleAppToInstallModel()
+                    ListOfApps.Add(new SingleSoftwareViewModel(new SingleSoftwareModel()
                     {
-                        AppName = lstRandomName[randGen.Next(lstRandomName.Length)],
+                        SoftwareName = lstRandomName[randGen.Next(lstRandomName.Length)],
                         NotesToolTip = Constants.LOREM_IPSUM,
                         ExistanceRegistryKey = @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion",
                         ExistanceRegistryValue = "SM_GamesName",
@@ -73,13 +72,12 @@ namespace QuickSetup.UI.ViewModel
             // Code runs "for real"
             else
             {
-                Logger.Log.Error("MainViewModel ctor runtime");
+                InitLog4NetOutputToWindow();
+
                 foreach (var singleModel in Dal.LoadAll())
                 {
-                    ListOfApps.Add(new SingleAppToInstallViewModel(singleModel));
+                    ListOfApps.Add(new SingleSoftwareViewModel(singleModel));
                 }
-
-                InitLog4NetOutputToWindow();
             }
         }
 
@@ -87,7 +85,7 @@ namespace QuickSetup.UI.ViewModel
 
         #region Properties
 
-        public ObservableCollection<SingleAppToInstallViewModel> ListOfApps { get; set; }
+        public ObservableCollection<SingleSoftwareViewModel> ListOfApps { get; set; }
 
         public ICommand SaveAllApps { get; private set; }
 
@@ -123,9 +121,7 @@ namespace QuickSetup.UI.ViewModel
                 Console.SetOut(logWriterToScreen);
 
                 // Log a message.
-                Logger.Log.Debug("test");
-                Logger.Log.Warn("test");
-                Logger.Log.Error("test");
+                Logger.Log.Debug("New Run is starting...");
 
                 // Get all messages written to the console.
                 _tmrLogRefresh.Interval = TimeSpan.FromMilliseconds(500);
@@ -178,16 +174,6 @@ namespace QuickSetup.UI.ViewModel
             catch (Exception ex)
             {
                 Logger.Log.Error(ex);
-            }
-        }
-
-        //TODO: REMOVE
-        private void TempLoadFromOldDB()
-        {
-            ListOfApps.Clear();
-            foreach (var singleModel in Dal.LoadFromOldDB())
-            {
-                ListOfApps.Add(new SingleAppToInstallViewModel(singleModel));
             }
         }
 

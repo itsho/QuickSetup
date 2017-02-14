@@ -8,6 +8,6 @@ namespace QuickSetup.Logic.Models
     public class AppsListModel
     {
         [XmlElement]
-        public List<SingleAppToInstallModel> AppsList { get; set; }
+        public List<SingleSoftwareModel> AppsList { get; set; }
     }
 }
