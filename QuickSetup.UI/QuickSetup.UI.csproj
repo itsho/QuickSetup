@@ -108,10 +108,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="ViewModel\MainViewModel.cs" />
-    <Compile Include="ViewModel\SingleAppToInstallViewModel.cs" />
+    <Compile Include="ViewModel\SingleSoftwareViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
-    <Compile Include="Views\SingleAppToInstallView.xaml.cs">
-      <DependentUpon>SingleAppToInstallView.xaml</DependentUpon>
+    <Compile Include="Views\SingleSoftwareView.xaml.cs">
+      <DependentUpon>SingleSoftwareView.xaml</DependentUpon>
     </Compile>
     <Page Include="Resources\Icons.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -133,7 +133,7 @@
       <DependentUpon>MainView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Views\SingleAppToInstallView.xaml">
+    <Page Include="Views\SingleSoftwareView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

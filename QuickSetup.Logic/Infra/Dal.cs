@@ -7,6 +7,8 @@ namespace QuickSetup.Logic.Infra
 {
     public static class Dal
     {
+        private static readonly Dictionary<string, string> m_dictLang = new Dictionary<string, string>();
+
         public static List<SingleSoftwareModel> LoadAll()
         {
             try
@@ -47,6 +49,37 @@ namespace QuickSetup.Logic.Infra
             {
                 Logger.Log.Error(ex);
             }
+        }
+
+        public static Dictionary<string, string> LoadListOfLanguagesIso6392()
+        {
+            try
+            {
+                if (m_dictLang.Count == 0)
+                {
+                    using (var fs = File.OpenRead(@"Data\ISO639.csv"))
+                    {
+                        using (var reader = new StreamReader(fs))
+                        {
+                            while (!reader.EndOfStream)
+                            {
+                                var line = reader.ReadLine();
+                                if (line != null)
+                                {
+                                    var values = line.Split(',');
+
+                                    m_dictLang.Add(values[0], values[1]);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log.Error("Error while reading list of languages", ex);
+            }
+            return m_dictLang;
         }
     }
 }

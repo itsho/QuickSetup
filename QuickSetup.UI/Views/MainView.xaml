@@ -84,47 +84,97 @@
             </Grid.ColumnDefinitions>
 
             <!--  Grid of apps  -->
-            <xcdg:DataGridControl Grid.Column="0"
-                                  Margin="5"
-                                  AutoCreateColumns="False"
-                                  ItemsSource="{Binding Path=ListOfApps}">
+            <DockPanel Grid.Column="0">
+                <ToolBar DockPanel.Dock="Top">
+                    <Button Command="{Binding Path=AddNewAppCommand}">
+                        <StackPanel Orientation="Horizontal">
+                            <Rectangle Width="20" Height="20">
+                                <Rectangle.Fill>
+                                    <VisualBrush Visual="{StaticResource appbar_add}" />
+                                </Rectangle.Fill>
+                            </Rectangle>
+                            <TextBlock VerticalAlignment="Center" Text="Add New" />
+                        </StackPanel>
+                    </Button>
+                    <Button Command="{Binding Path=RemoveSelectedSoftwareCommand}">
+                        <StackPanel Orientation="Horizontal">
+                            <Rectangle Width="20" Height="20">
+                                <Rectangle.Fill>
+                                    <VisualBrush Visual="{StaticResource appbar_app_minus}" />
+                                </Rectangle.Fill>
+                            </Rectangle>
+                            <TextBlock VerticalAlignment="Center" Text="Remove Selected" />
+                        </StackPanel>
+                    </Button>
 
-                <xcdg:DataGridControl.View>
-                    <xcdg:TableflowView ContainerHeight="40" ShowRowSelectorPane="False" />
-                </xcdg:DataGridControl.View>
+                    <Separator />
+                    <Button Command="{Binding Path=LoadAllApps, Mode=OneWay}">
+                        <StackPanel Orientation="Horizontal">
+                            <Rectangle Width="20" Height="20">
+                                <Rectangle.Fill>
+                                    <VisualBrush Visual="{StaticResource appbar_book_open}" />
+                                </Rectangle.Fill>
+                            </Rectangle>
+                            <TextBlock VerticalAlignment="Center" Text="Load" />
+                        </StackPanel>
+                    </Button>
+                    <Button Command="{Binding Path=SaveAllApps, Mode=OneWay}">
+                        <StackPanel Orientation="Horizontal">
+                            <Rectangle Width="20" Height="20">
+                                <Rectangle.Fill>
+                                    <VisualBrush Visual="{StaticResource appbar_save}" />
+                                </Rectangle.Fill>
+                            </Rectangle>
+                            <TextBlock VerticalAlignment="Center" Text="Save" />
+                        </StackPanel>
+                    </Button>
+                </ToolBar>
 
-                <xcdg:DataGridControl.Columns>
+                <xcdg:DataGridControl Margin="5"
+                                      AutoCreateColumns="False"
+                                      AutoScrollCurrentItem="All"
+                                      ItemsSource="{Binding Path=SoftwareList,
+                                                            Mode=OneWay}"
+                                      SelectedItem="{Binding Path=SelectedSoftware,
+                                                             Mode=TwoWay,
+                                                             UpdateSourceTrigger=PropertyChanged}">
 
-                    <xcdg:Column Title="Install?"
-                                 Width="60"
-                                 MinWidth="50"
-                                 MaxWidth="70"
-                                 FieldName="IsChecked"
-                                 Visible="False">
-                        <xcdg:Column.CellContentTemplate>
-                            <DataTemplate>
-                                <CheckBox IsChecked="{xcdg:CellEditorBinding}" />
-                            </DataTemplate>
-                        </xcdg:Column.CellContentTemplate>
-                    </xcdg:Column>
+                    <xcdg:DataGridControl.View>
+                        <xcdg:TableflowView ContainerHeight="45" ShowRowSelectorPane="False" />
+                    </xcdg:DataGridControl.View>
 
-                    <xcdg:Column Title="Software Name"
-                                 Width="180"
-                                 FieldName="Model.SoftwareName"
-                                 IsMainColumn="True"
-                                 ReadOnly="True" />
+                    <xcdg:DataGridControl.Columns>
 
-                    <xcdg:Column Title="Language"
-                                 Width="70"
-                                 FieldName="Model.LangCodeIso6392"
-                                 IsMainColumn="False"
-                                 ReadOnly="True" />
+                        <xcdg:Column Title="Install?"
+                                     Width="60"
+                                     MinWidth="50"
+                                     MaxWidth="70"
+                                     FieldName="IsChecked"
+                                     Visible="False">
+                            <xcdg:Column.CellContentTemplate>
+                                <DataTemplate>
+                                    <CheckBox IsChecked="{xcdg:CellEditorBinding}" />
+                                </DataTemplate>
+                            </xcdg:Column.CellContentTemplate>
+                        </xcdg:Column>
 
-                    <xcdg:Column Title="Status"
-                                 FieldName="Status"
-                                 IsMainColumn="False"
-                                 ReadOnly="True">
-                        <!--<xcdg:Column.CellContentTemplate>
+                        <xcdg:Column Title="Software Name"
+                                     Width="180"
+                                     FieldName="OriginalModel.SoftwareName"
+                                     IsMainColumn="True"
+                                     ReadOnly="True" />
+
+                        <xcdg:Column Title="Language"
+                                     Width="70"
+                                     FieldName="OriginalModel.LangCodeIso6392"
+                                     IsMainColumn="False"
+                                     ReadOnly="True" />
+
+                        <xcdg:Column Title="Status"
+                                     FieldName="Status"
+                                     IsMainColumn="False"
+                                     ReadOnly="True">
+                            <!--<xcdg:Column.CellContentTemplate>
                             <DataTemplate>
                                 <StackPanel>
                                     <TextBlock Text="{Binding}" />
@@ -132,48 +182,49 @@
                                 </StackPanel>
                             </DataTemplate>
                         </xcdg:Column.CellContentTemplate>-->
-                    </xcdg:Column>
+                        </xcdg:Column>
 
-                    <xcdg:UnboundColumn Title="Operations"
-                                        MinWidth="30"
-                                        FieldName="FakeColumnName">
-                        <xcdg:UnboundColumn.CellContentTemplate>
+                        <xcdg:UnboundColumn Title="Operations"
+                                            MinWidth="30"
+                                            FieldName="FakeColumnName">
+                            <xcdg:UnboundColumn.CellContentTemplate>
 
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <!--
-                                        Commands are not working with Xceed UnboundColumn. no idea why
-                                        Command="{Binding Path=ParentRow.Row.InstallCommand}"
-                                    -->
-                                    <Button MinWidth="50"
-                                            Margin="3"
-                                            Click="ButtonInstall_OnClick">
-                                        <Rectangle Width="20" Height="20">
-                                            <Rectangle.Fill>
-                                                <VisualBrush Visual="{StaticResource appbar_cabinet_in}" />
-                                            </Rectangle.Fill>
-                                        </Rectangle>
-                                    </Button>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <!--
+                                            Commands are not working with Xceed UnboundColumn. no idea why
+                                            Command="{Binding Path=ParentRow.Row.InstallCommand}"
+                                        -->
+                                        <Button MinWidth="50"
+                                                Margin="3"
+                                                Click="ButtonInstall_OnClick">
+                                            <Rectangle Width="20" Height="20">
+                                                <Rectangle.Fill>
+                                                    <VisualBrush Visual="{StaticResource appbar_cabinet_in}" />
+                                                </Rectangle.Fill>
+                                            </Rectangle>
+                                        </Button>
 
-                                    <!--
-                                        Commands are not working with Xceed UnboundColumn. no idea why
-                                        Command="{Binding Path=DataGridContext.EditAppCommand}"
-                                    -->
-                                    <Button MinWidth="50"
-                                            Margin="3"
-                                            Click="ButtonEdit_OnClick">
-                                        <Rectangle Width="20" Height="20">
-                                            <Rectangle.Fill>
-                                                <VisualBrush Visual="{StaticResource appbar_edit}" />
-                                            </Rectangle.Fill>
-                                        </Rectangle>
-                                    </Button>
-                                </StackPanel>
-                            </DataTemplate>
-                        </xcdg:UnboundColumn.CellContentTemplate>
-                    </xcdg:UnboundColumn>
-                </xcdg:DataGridControl.Columns>
-            </xcdg:DataGridControl>
+                                        <!--
+                                            Commands are not working with Xceed UnboundColumn. no idea why
+                                            Command="{Binding Path=DataGridContext.EditAppCommand}"
+                                        -->
+                                        <Button MinWidth="50"
+                                                Margin="3"
+                                                Click="ButtonEdit_OnClick">
+                                            <Rectangle Width="20" Height="20">
+                                                <Rectangle.Fill>
+                                                    <VisualBrush Visual="{StaticResource appbar_edit}" />
+                                                </Rectangle.Fill>
+                                            </Rectangle>
+                                        </Button>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </xcdg:UnboundColumn.CellContentTemplate>
+                        </xcdg:UnboundColumn>
+                    </xcdg:DataGridControl.Columns>
+                </xcdg:DataGridControl>
+            </DockPanel>
 
             <GridSplitter Grid.Row="0"
                           Grid.Column="1"

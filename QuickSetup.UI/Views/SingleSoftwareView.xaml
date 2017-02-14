@@ -1,0 +1,187 @@
+﻿<Window x:Class="QuickSetup.UI.Views.SingleSoftwareView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewModel="clr-namespace:QuickSetup.UI.ViewModel"
+        Title="Single Software - Edit"
+        Width="450"
+        MinWidth="400"
+        MinHeight="500"
+        d:DataContext="{d:DesignInstance Type=viewModel:SingleSoftwareViewModel,
+                                         IsDesignTimeCreatable=True}"
+        SizeToContent="Height"
+        mc:Ignorable="d">
+
+    <StackPanel Margin="10">
+        <TextBlock>
+            <Rectangle Width="20" Height="20">
+                <Rectangle.Fill>
+                    <VisualBrush Visual="{StaticResource appbar_os_windows_8}" />
+                </Rectangle.Fill>
+            </Rectangle>
+            <Run Text="Software Name" />
+        </TextBlock>
+        <TextBox FontWeight="Bold" Text="{Binding Path=ClonedModel.SoftwareName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+        <Separator />
+
+        <TextBlock>
+            <Rectangle Width="20" Height="20">
+                <Rectangle.Fill>
+                    <VisualBrush Visual="{StaticResource appbar_globe}" />
+                </Rectangle.Fill>
+            </Rectangle>
+            <Run Text="Language" />
+        </TextBlock>
+        <ComboBox DisplayMemberPath="Value"
+                  ItemsSource="{Binding Path=ListOfIso6392,
+                                        Mode=OneWay}"
+                  SelectedValue="{Binding Path=ClonedModel.LangCodeIso6392,
+                                          UpdateSourceTrigger=PropertyChanged,
+                                          Mode=TwoWay}"
+                  Text="{Binding Path=ClonedModel.LangCodeIso6392,
+                                 UpdateSourceTrigger=PropertyChanged,
+                                 Mode=TwoWay}" />
+        <Separator />
+
+        <TextBlock>
+            <Rectangle Width="20" Height="20">
+                <Rectangle.Fill>
+                    <VisualBrush Visual="{StaticResource appbar_notification_above_multiple}" />
+                </Rectangle.Fill>
+            </Rectangle>
+            <Run Text="Notes To display in Tooltip" />
+        </TextBlock>
+        <TextBox Text="{Binding Path=ClonedModel.NotesToolTip, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+        <Separator />
+
+        <TabControl>
+            <TabItem Header="Setup">
+                <StackPanel>
+                    <TextBlock Background="Yellow"
+                               FontSize="15"
+                               Text="Specify software setup location" />
+                    <Separator />
+
+                    <TextBlock>
+                        <Rectangle Width="20" Height="20">
+                            <Rectangle.Fill>
+                                <VisualBrush Visual="{StaticResource appbar_folder}" />
+                            </Rectangle.Fill>
+                        </Rectangle>
+                        <Run Text="Setup Folder" />
+                    </TextBlock>
+                    <TextBox Text="{Binding Path=ClonedModel.SetupFolder, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                    <Image />
+
+                    <TextBlock>
+                        <Rectangle Width="20" Height="20">
+                            <Rectangle.Fill>
+                                <VisualBrush Visual="{StaticResource appbar_page}" />
+                            </Rectangle.Fill>
+                        </Rectangle>
+                        <Run Text="Setup File Name" />
+                    </TextBlock>
+                    <DockPanel>
+                        <Button MinWidth="50"
+                                Command="{Binding Path=BrowseToSelectSetupFileCommand}"
+                                DockPanel.Dock="Right">
+                            ...
+                        </Button>
+                        <TextBox Text="{Binding Path=ClonedModel.SetupFileName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                    </DockPanel>
+
+                    <TextBlock>
+                        <Rectangle Width="20" Height="20">
+                            <Rectangle.Fill>
+                                <VisualBrush Visual="{StaticResource appbar_sound_mute}" />
+                            </Rectangle.Fill>
+                        </Rectangle>
+                        <Run Text="Setup Silent Params" />
+                    </TextBlock>
+                    <TextBox Text="{Binding Path=ClonedModel.SetupSilentParams, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+
+                    <Separator />
+
+                    <CheckBox IsChecked="{Binding Path=ClonedModel.IsMsiSetup, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
+                        <TextBlock Text="Is MSI Setup" ToolTip="Required since it is not recommended to run more than single MSI setup at a given time." />
+                    </CheckBox>
+                </StackPanel>
+            </TabItem>
+
+            <TabItem Header="Registry" ToolTip="Registry Key&amp;Value to check if software is installed">
+                <StackPanel>
+                    <TextBlock Background="Yellow"
+                               FontSize="15"
+                               Text="Specify Registry path to check if this software is installed" />
+                    <Separator />
+
+                    <TextBlock Text="Existance Registry Key" />
+                    <TextBox Text="{Binding Path=ClonedModel.ExistanceRegistryKey, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+
+                    <TextBlock Text="Existance Registry Value" />
+                    <TextBox Text="{Binding Path=ClonedModel.ExistanceRegistryValue, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="File" ToolTip="File path to check if software is installed">
+                <StackPanel>
+                    <TextBlock Background="Yellow"
+                               FontSize="15"
+                               Text="Specify file path to check if this software is installed" />
+                    <Separator />
+
+                    <TextBlock>
+                        <Run Text="Existance File Path" />
+                        <LineBreak />
+                        <Run FontSize="7" Text="Use Environment variable as possible: %AppData%, %ProgramFiles%, etc.." />
+                    </TextBlock>
+                    <DockPanel>
+                        <Button Command="{Binding Path=TranslatePathToEnvVarCommand}"
+                                DockPanel.Dock="Right"
+                                ToolTip="Will try to translate path to Environment variable as possible">
+                            <TextBlock Text="Translate to EnvVar..." />
+                        </Button>
+                        <TextBox Text="{Binding Path=ClonedModel.ExistanceFilePath, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                    </DockPanel>
+
+                    <TextBlock Text="File MD5 Hash" />
+                    <DockPanel>
+                        <Button Command="{Binding Path=CalculateMD5OfExistanceFilePathCommand}"
+                                DockPanel.Dock="Right"
+                                ToolTip="Calculate MD5 of selected file">
+                            <TextBlock Text="Calculate MD5..." />
+                        </Button>
+                        <TextBox Text="{Binding Path=ClonedModel.ExistanceFileMd5Hash, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                    </DockPanel>
+                </StackPanel>
+            </TabItem>
+        </TabControl>
+
+        <Separator />
+
+        <!--  Save & Discard Buttons  -->
+        <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+            <Button Margin="5"
+                    Command="{Binding Path=SaveChangesAndCloseCommand}"
+                    IsDefault="True"
+                    ToolTip="Save changes and close window">
+                <Rectangle Width="30" Height="30">
+                    <Rectangle.Fill>
+                        <VisualBrush Visual="{StaticResource appbar_save}" />
+                    </Rectangle.Fill>
+                </Rectangle>
+            </Button>
+
+            <Button Margin="5"
+                    Command="{Binding Path=DiscardAndCloseCommand}"
+                    IsCancel="True"
+                    ToolTip="Discard changes and close window">
+                <Rectangle Width="30" Height="30">
+                    <Rectangle.Fill>
+                        <VisualBrush Visual="{StaticResource appbar_close}" />
+                    </Rectangle.Fill>
+                </Rectangle>
+            </Button>
+        </StackPanel>
+    </StackPanel>
+</Window>
