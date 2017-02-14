@@ -1,9 +1,39 @@
-﻿
-* add field - FileHash (to check if existing file is exactly the one we are looking for)
-* add field - Last modified date,Pc\User
+﻿Done:
+	* add field - FileHash (to check if existing file is exactly the one we are looking for)
+	* Log4net output will be availble.
 
-* ability to install new lang
+
+TODO:
+* fix grid row height - buttons are trimmed
+* statusItem is white in design mode
+
+* each app will have Checkbox, name, install button, edit button, Status field
+* to display fake progress - check if setup file is in use
+* status field: 
+	> V - installed
+	> Blank - if not installed
+	> ! - if setup file is missing	
+	> ? - unknown issue
+
+
+* link to open "install new lang" - run "Lpksetup"
 * ability to set lang for non-unicode program or open this screen ("region")
+https://gallery.technet.microsoft.com/scriptcenter/Powershell-Set-language-981df2b0
+control.exe "intl.cpl,,/f:`"c:\myregionalcfg.xml`""
+
+-- myregionalcfg.xml content start --
+<gs:GlobalizationServices xmlns:gs="urn:longhornGlobalizationUnattend">  
+	<!--User List--> 
+	<gs:UserList> 
+		<gs:User UserID="Current" CopySettingsToDefaultUserAcct="true" CopySettingsToSystemAcct="true"/>  
+	</gs:UserList> 
+ 
+	<!-- This sets system locale to Hebrew --> 
+	<gs:SystemLocale Name="he-IL" /> 
+</gs:GlobalizationServices>
+-- myregionalcfg.xml content end --
+
+
 * file association window
 * default browser
 * windows activation status
@@ -19,17 +49,15 @@
     Install Calculator that works on Non-Metro mode from oldcalcwin10_winaero.com_1995.zip (or http://winaero.com/download.php?view.1795)
     Restart
 
-*  get public IP display at bottom
-*  Take ownership - install/uninstall
+* get public IP display at bottom
+* Take ownership - install/uninstall
 * classic shell setup
-* Idea - generic RegKey to detect installed version. probably very hard
-* to display fake progress - check if setup file is in use
-* status field: 
-	> V - installed
-	> Blank - if not installed
-	> ! - if setup file is missing	
-	> ? - unknown issue
 
-* each app will have Checkbox, name, install button, edit button, Status field
-* at bottom, an expander with Log4net output will be availble.
 
+
+
+
+
+--- Wont be done ----
+X add field - Last modified date,Pc\User
+X Idea - generic RegKey to detect installed version. impossible in most cases 
