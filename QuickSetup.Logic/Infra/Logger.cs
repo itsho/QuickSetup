@@ -1,17 +1,16 @@
 ﻿using log4net;
 using log4net.Appender;
-using log4net.Core;
 using log4net.Layout;
 using log4net.Repository.Hierarchy;
 using System;
 using System.IO;
 using System.Reflection;
+using log4net.Core;
 
 namespace QuickSetup.Logic.Infra
 {
     public static class Logger
     {
-
         #region Data members
 
         private static bool _blnIsInitialized = false;
@@ -31,12 +30,12 @@ namespace QuickSetup.Logic.Infra
                 return;
             }
 
-            PatternLayout patternLayout = new PatternLayout();
-            patternLayout.ConversionPattern = "%date  [%thread]  |%level|  |%class.%method() line: %line|  || %message %newline";
-            patternLayout.ActivateOptions();
+            PatternLayout patternLayoutFull = new PatternLayout();
+            patternLayoutFull.ConversionPattern = "%date  [%thread]  |%level|  |%class.%method() line: %line|  || %message %newline";
+            patternLayoutFull.ActivateOptions();
 
             RollingFileAppender roller = new RollingFileAppender();
-            roller.Layout = patternLayout;
+            roller.Layout = patternLayoutFull;
 
             Hierarchy hierarchy = (Hierarchy)LogManager.GetRepository();
 
@@ -57,31 +56,37 @@ namespace QuickSetup.Logic.Infra
 
             #endregion File logger
 
-            #region Windows Event Logger
+            //#region Windows Event Logger
 
-            var eventLoggerAppender = new EventLogAppender
-            {
-                ApplicationName = Constants.APPLICATIONNAME,
-                LogName = Constants.APPLICATIONNAME,
-                Layout = patternLayout,
-                Threshold = Level.Error
-            };
-            eventLoggerAppender.ActivateOptions();
-            hierarchy.Root.AddAppender(eventLoggerAppender);
-
-            #endregion Windows Event Logger
-
-            //if (Environment.UserInteractive)
+            //var eventLoggerAppender = new EventLogAppender
             //{
-            //    var consoleAppender = new ConsoleAppender
-            //    {
-            //        Name = APPLICATIONNAME,
-            //        Layout = patternLayout,
-            //        Threshold = Level.All
-            //    };
-            //    consoleAppender.ActivateOptions();
-            //    hierarchy.Root.AddAppender(consoleAppender);
-            //}
+            //    ApplicationName = Constants.APPLICATIONNAME,
+            //    LogName = Constants.APPLICATIONNAME,
+            //    Layout = patternLayout,
+            //    Threshold = Level.Error
+            //};
+            //eventLoggerAppender.ActivateOptions();
+            //hierarchy.Root.AddAppender(eventLoggerAppender);
+
+            //#endregion Windows Event Logger
+
+            if (Environment.UserInteractive)
+            {
+                // we write to console and capture it later to a WPF window
+                //so, we only write the parts the end-user like to see
+                var patternLayoutPartial = new PatternLayout();
+                patternLayoutPartial.ConversionPattern = "%date  [%thread]  |%level|  || %message %newline";
+                patternLayoutPartial.ActivateOptions();
+
+                var consoleAppender = new ConsoleAppender
+                {
+                    Name = Constants.APPLICATIONNAME,
+                    Layout = patternLayoutPartial,
+                    Threshold = Level.All
+                };
+                consoleAppender.ActivateOptions();
+                hierarchy.Root.AddAppender(consoleAppender);
+            }
 
             hierarchy.Configured = true;
 
