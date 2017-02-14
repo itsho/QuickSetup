@@ -90,7 +90,7 @@
                                   ItemsSource="{Binding Path=ListOfApps}">
 
                 <xcdg:DataGridControl.View>
-                    <xcdg:TableflowView ShowRowSelectorPane="False" />
+                    <xcdg:TableflowView ContainerHeight="40" ShowRowSelectorPane="False" />
                 </xcdg:DataGridControl.View>
 
                 <xcdg:DataGridControl.Columns>
@@ -99,7 +99,8 @@
                                  Width="60"
                                  MinWidth="50"
                                  MaxWidth="70"
-                                 FieldName="IsChecked">
+                                 FieldName="IsChecked"
+                                 Visible="False">
                         <xcdg:Column.CellContentTemplate>
                             <DataTemplate>
                                 <CheckBox IsChecked="{xcdg:CellEditorBinding}" />
@@ -109,7 +110,7 @@
 
                     <xcdg:Column Title="Software Name"
                                  Width="180"
-                                 FieldName="Model.AppName"
+                                 FieldName="Model.SoftwareName"
                                  IsMainColumn="True"
                                  ReadOnly="True" />
 
@@ -122,7 +123,16 @@
                     <xcdg:Column Title="Status"
                                  FieldName="Status"
                                  IsMainColumn="False"
-                                 ReadOnly="True" />
+                                 ReadOnly="True">
+                        <!--<xcdg:Column.CellContentTemplate>
+                            <DataTemplate>
+                                <StackPanel>
+                                    <TextBlock Text="{Binding}" />
+                                    <Image Source="{Binding}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </xcdg:Column.CellContentTemplate>-->
+                    </xcdg:Column>
 
                     <xcdg:UnboundColumn Title="Operations"
                                         MinWidth="30"
@@ -131,20 +141,27 @@
 
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
+                                    <!--
+                                        Commands are not working with Xceed UnboundColumn. no idea why
+                                        Command="{Binding Path=ParentRow.Row.InstallCommand}"
+                                    -->
                                     <Button MinWidth="50"
                                             Margin="3"
-                                            Click="ButtonInstall_OnClick"
-                                            Command="{Binding Path=ParentRow.Row.InstallCommand}">
+                                            Click="ButtonInstall_OnClick">
                                         <Rectangle Width="20" Height="20">
                                             <Rectangle.Fill>
                                                 <VisualBrush Visual="{StaticResource appbar_cabinet_in}" />
                                             </Rectangle.Fill>
                                         </Rectangle>
                                     </Button>
+
+                                    <!--
+                                        Commands are not working with Xceed UnboundColumn. no idea why
+                                        Command="{Binding Path=DataGridContext.EditAppCommand}"
+                                    -->
                                     <Button MinWidth="50"
                                             Margin="3"
-                                            Click="ButtonEdit_OnClick"
-                                            Command="{Binding Path=DataGridContext.EditAppCommand}">
+                                            Click="ButtonEdit_OnClick">
                                         <Rectangle Width="20" Height="20">
                                             <Rectangle.Fill>
                                                 <VisualBrush Visual="{StaticResource appbar_edit}" />
@@ -155,42 +172,6 @@
                             </DataTemplate>
                         </xcdg:UnboundColumn.CellContentTemplate>
                     </xcdg:UnboundColumn>
-                    <!--<xcdg:Column FieldName="23">
-                        <xcdg:Column.CellEditor>
-                            <xcdg:CellEditor>
-                                <xcdg:CellEditor.EditTemplate>
-                                    <DataTemplate>
-                                        <DockPanel>
-                                            <TextBlock x:Name="actual_value"
-                                     Text="{xcdg:CellEditorBinding}"
-                                      DockPanel.Dock="Top" />
-                                            <UniformGrid Columns="4" x:Name="parentPanel"
-                                        Tag="{Binding ElementName=actual_value,
-                                                      Path=Text,
-                                                      Mode=TwoWay,
-                                                      UpdateSourceTrigger=PropertyChanged}"
-                                        Button.Click="Calculate"
-                                        DockPanel.Dock="Top">
-                                                <Button x:Name="seven" Content="7" />
-                    -->
-                    <!--  ...  -->
-                    <!--
-                                                <Button x:Name="addition" Content="+" />
-                                            </UniformGrid>
-                                            <TextBlock x:Name="current_equation" DockPanel.Dock="Bottom" />
-                                        </DockPanel>
-                                    </DataTemplate>
-                                </xcdg:CellEditor.EditTemplate>
-                                <xcdg:CellEditor.ActivationGestures>
-                                    <xcdg:KeyActivationGesture Key="NumPad0" />
-                    -->
-                    <!--  ...  -->
-                    <!--
-                                    <xcdg:KeyActivationGesture Key="NumPad9" />
-                                </xcdg:CellEditor.ActivationGestures>
-                            </xcdg:CellEditor>
-                        </xcdg:Column.CellEditor>
-                    </xcdg:Column>-->
                 </xcdg:DataGridControl.Columns>
             </xcdg:DataGridControl>
 

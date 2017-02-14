@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Xml.Serialization;
+using System.Diagnostics;
 
 namespace QuickSetup.Logic.Models
 {
-    public class SingleAppToInstallModel : IComparable<SingleAppToInstallModel>
+    [DebuggerDisplay("Name {SoftwareName}  |  HasReg {ExistanceRegistryKey != string.Empty}  |  HasFile:{ExistanceFilePath != string.Empty}")]
+    public class SingleSoftwareModel : IComparable<SingleSoftwareModel>
     {
-        public string AppName
-        {
-            get; set;
-        }
+        public string SoftwareName { get; set; }
 
         /// <summary>
         /// https://www.loc.gov/standards/iso639-2/php/code_list.php
@@ -37,7 +35,7 @@ namespace QuickSetup.Logic.Models
         public string ExistanceRegistryValue { get; set; }
 
         /// <summary>
-        /// <para>Can use special folders.</para>
+        /// <para>Can use environment variables</para>
         /// <para>for example:</para>
         /// <para>%AppData%</para>
         /// <para>%ProgramData%</para>
@@ -50,7 +48,7 @@ namespace QuickSetup.Logic.Models
 
         public string ExistanceFileMd5Hash { get; set; }
 
-        public int CompareTo(SingleAppToInstallModel other)
+        public int CompareTo(SingleSoftwareModel other)
         {
             throw new NotImplementedException();
         }
