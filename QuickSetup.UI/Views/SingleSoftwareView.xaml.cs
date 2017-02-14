@@ -1,8 +1,8 @@
-﻿using System.Windows;
+﻿using MahApps.Metro.Controls;
 
 namespace QuickSetup.UI.Views
 {
-    public partial class SingleSoftwareView : Window
+    public partial class SingleSoftwareView : MetroWindow
     {
         public SingleSoftwareView()
         {
