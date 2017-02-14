@@ -1,19 +1,22 @@
 ﻿Done:
 	* add field - FileHash (to check if existing file is exactly the one we are looking for)
 	* Log4net output will be availble.
+	* fix grid row height - buttons are trimmed
 
 
 TODO:
-* fix grid row height - buttons are trimmed
 * statusItem is white in design mode
-
-* each app will have Checkbox, name, install button, edit button, Status field
-* to display fake progress - check if setup file is in use
 * status field: 
 	> V - installed
 	> Blank - if not installed
 	> ! - if setup file is missing	
 	> ? - unknown issue
+
+* add two buttons to the top - "Add" and "Remove"
+* decide: "edit" and "remove" as buttons or as context menu?
+* add SingleApp window to show when Edit or Add button is clicked
+* each app will have Checkbox, name, install button, edit button, Status field
+* to display fake progress - check if setup file is in use
 
 
 * link to open "install new lang" - run "Lpksetup"

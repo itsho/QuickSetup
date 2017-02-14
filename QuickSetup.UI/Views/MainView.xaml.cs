@@ -1,9 +1,7 @@
-﻿using log4net.Config;
-using MahApps.Metro.Controls;
+﻿using MahApps.Metro.Controls;
 using QuickSetup.Logic.Infra;
+using QuickSetup.UI.ViewModel;
 using System;
-using System.IO;
-using System.Text;
 using System.Windows;
 using System.Windows.Input;
 using Xceed.Wpf.DataGrid;
@@ -26,16 +24,18 @@ namespace QuickSetup.UI.Views
         {
             try
             {
-                Logger.Log.Debug("ButtonInstall_OnClick started");
-                Cell cell = Cell.FindFromChild(p_sender as DependencyObject);
-                var drv2 = DataGridControl.GetDataGridContext(cell).GetItemFromContainer(cell.ParentRow) as SingleAppToInstallView;
+                Logger.Log.Info("Install button clicked");
+                var cell = Cell.FindFromChild(p_sender as DependencyObject);
+                var singleApp = DataGridControl.GetDataGridContext(cell).GetItemFromContainer(cell.ParentRow) as SingleSoftwareViewModel;
 
-                //var editor = new ProductsEditorWindow();
-                //editor.ShowDialog();
+                if (singleApp != null && singleApp.InstallCommand.CanExecute(null))
+                {
+                    singleApp.InstallCommand.Execute(null);
+                }
             }
             catch (Exception ex)
             {
-                Logger.Log.Error(ex);
+                Logger.Log.Error("Error while trying to install software", ex);
             }
         }
 
@@ -43,16 +43,18 @@ namespace QuickSetup.UI.Views
         {
             try
             {
-                Logger.Log.Debug("ButtonEdit_OnClick started");
-                Cell cell = Cell.FindFromChild(p_sender as DependencyObject);
-                var drv2 = DataGridControl.GetDataGridContext(cell).GetItemFromContainer(cell.ParentRow) as SingleAppToInstallView;
+                Logger.Log.Info("Edit button clicked");
+                var cell = Cell.FindFromChild(p_sender as DependencyObject);
+                var singleApp = DataGridControl.GetDataGridContext(cell).GetItemFromContainer(cell.ParentRow) as SingleSoftwareViewModel;
 
-                //var editor = new ProductsEditorWindow();
-                //editor.ShowDialog();
+                if (singleApp != null && singleApp.InstallCommand.CanExecute(null))
+                {
+                    singleApp.InstallCommand.Execute(null);
+                }
             }
             catch (Exception ex)
             {
-                Logger.Log.Error(ex);
+                Logger.Log.Error("Error while trying to edit software", ex);
             }
         }
     }
