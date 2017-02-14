@@ -49,7 +49,6 @@ namespace QuickSetup.UI.ViewModel
             SaveAllApps = new RelayCommand(OnSaveAllApps);
             LoadAllApps = new RelayCommand(OnLoadAllApps);
             AddNewAppCommand = new RelayCommand(OnAddNewAppCommand);
-            RemoveSelectedSoftwareCommand = new RelayCommand(OnRemoveSelectedSoftwareCommand);
 
             // Code runs in Blend --> create design time data.
             if (IsInDesignMode)
@@ -82,10 +81,15 @@ namespace QuickSetup.UI.ViewModel
             {
                 InitLog4NetOutputToWindow();
 
+                SoftwareList.Clear();
                 foreach (var singleModel in Dal.LoadAll())
                 {
                     SoftwareList.Add(new SingleSoftwareViewModel(singleModel));
                 }
+
+#if DEBUG
+                IsDev = true;
+#endif
             }
         }
 
@@ -110,13 +114,13 @@ namespace QuickSetup.UI.ViewModel
 
         public ICommand AddNewAppCommand { get; private set; }
 
-        public ICommand RemoveSelectedSoftwareCommand { get; private set; }
-
         public string LogOutputToWindow
         {
             get { return _strLogOutput; }
             set { Set(ref _strLogOutput, value, nameof(LogOutputToWindow)); }
         }
+
+        public bool IsDev { get; set; }
 
         #endregion Properties
 
@@ -204,9 +208,13 @@ namespace QuickSetup.UI.ViewModel
             Dal.SaveAll(tempListToSave);
         }
 
-        private static void OnLoadAllApps()
+        private void OnLoadAllApps()
         {
-            Dal.LoadAll();
+            SoftwareList.Clear();
+            foreach (var singleModel in Dal.LoadAll())
+            {
+                SoftwareList.Add(new SingleSoftwareViewModel(singleModel));
+            }
         }
 
         private void OnAddNewAppCommand()
@@ -233,22 +241,6 @@ namespace QuickSetup.UI.ViewModel
             catch (Exception ex)
             {
                 Logger.Log.Error("Error while adding new software", ex);
-            }
-        }
-
-        private void OnRemoveSelectedSoftwareCommand()
-        {
-            try
-            {
-                if (SelectedSoftware != null)
-                {
-                    SoftwareList.Remove(SelectedSoftware);
-                    SelectedSoftware = SoftwareList.FirstOrDefault();
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.Log.Error("Error while removing selected software", ex);
             }
         }
 

@@ -6,6 +6,7 @@ using QuickSetup.Logic.Infra;
 using QuickSetup.Logic.Infra.Enums;
 using QuickSetup.Logic.Models;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -51,6 +52,7 @@ namespace QuickSetup.UI.ViewModel
             DiscardAndCloseCommand = new RelayCommand(OnDiscardAndCloseCommand);
             SaveChangesAndCloseCommand = new RelayCommand(OnSaveChangesAndCloseCommand);
             BrowseToSelectSetupFileCommand = new RelayCommand(OnBrowseToSelectSetupFileCommand);
+            OpenRegistryKeyCommand = new RelayCommand(OnOpenRegistryKeyCommand, CanExecuteOpenRegistryKeyCommand);
 
             RefreshSoftwareInstallStatusEnum();
 
@@ -85,6 +87,8 @@ namespace QuickSetup.UI.ViewModel
 
         public ICommand BrowseToSelectSetupFileCommand { get; private set; }
 
+        public ICommand OpenRegistryKeyCommand { get; private set; }
+
         public SoftwareInstallStatusEnum Status
         {
             get { return _status; }
@@ -117,7 +121,8 @@ namespace QuickSetup.UI.ViewModel
         {
             try
             {
-                Process.Start("explorer " + ClonedModel.SetupFolder, "/s," + ClonedModel.SetupFileName);
+                var strArgument = @"/select, """ + Path.Combine(ClonedModel.SetupFolder, ClonedModel.SetupFileName) + @"""";
+                Process.Start("explorer.exe", strArgument);
             }
             catch (Exception ex)
             {
@@ -153,9 +158,25 @@ namespace QuickSetup.UI.ViewModel
                 var lstEnvironmentVariables = Environment.GetEnvironmentVariables();
 
                 Debugger.Break();
-                //if (Model.ExistanceFilePath)
-                //{
-                //}
+                if (!string.IsNullOrWhiteSpace(ClonedModel.ExistanceFilePath))
+                {
+                    foreach (DictionaryEntry envVariable in lstEnvironmentVariables)
+                    {
+                        if (envVariable.Key.ToString() == "HOMEDRIVE")
+                        {
+                            continue;
+                        }
+
+                        if (ClonedModel.ExistanceFilePath.StartsWith(envVariable.Value.ToString(), StringComparison.Ordinal))
+                        {
+                            // replace simple string with environment variable
+                            ClonedModel.ExistanceFilePath =
+                                ClonedModel.ExistanceFilePath.Replace(envVariable.Value.ToString(),
+                                    string.Format("%{0}%", envVariable.Key));
+                            RaisePropertyChanged(nameof(ClonedModel));
+                        }
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -177,6 +198,7 @@ namespace QuickSetup.UI.ViewModel
                 if (File.Exists(path))
                 {
                     ClonedModel.ExistanceFileMd5Hash = CalculateMd5(path);
+                    RaisePropertyChanged(nameof(ClonedModel));
                 }
             }
             catch (Exception ex)
@@ -226,12 +248,53 @@ namespace QuickSetup.UI.ViewModel
                 {
                     ClonedModel.SetupFolder = Path.GetDirectoryName(dialog.FileName);
                     ClonedModel.SetupFileName = Path.GetFileName(dialog.FileName);
+                    RaisePropertyChanged(nameof(ClonedModel));
                 }
             }
             catch (Exception ex)
             {
                 Logger.Log.Error("Error while getting app status", ex);
             }
+        }
+
+        private void OnOpenRegistryKeyCommand()
+        {
+            try
+            {
+                // I want to avoid RegJump since I'm not sure if the way i'm using it is allowed
+
+                var lstProcRegEdit = Process.GetProcessesByName("regedit");
+                if (lstProcRegEdit.Length > 0)
+                {
+                    Logger.Log.Info("Registry Editor already open. closing and re-opening.");
+                    foreach (var process in lstProcRegEdit)
+                    {
+                        process.Kill();
+                    }
+                }
+
+                //http://stackoverflow.com/a/12516008/426315
+                var keyRegedit =
+                    Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Applets\Regedit",
+                        RegistryKeyPermissionCheck.ReadWriteSubTree);
+                if (keyRegedit != null)
+                {
+                    // set LastKey value
+                    keyRegedit.SetValue("LastKey", ClonedModel.ExistanceRegistryKey, RegistryValueKind.String);
+                }
+
+                // start regedit
+                Process.Start("regedit");
+            }
+            catch (Exception ex)
+            {
+                Logger.Log.Error("Error while editing software", ex);
+            }
+        }
+
+        private bool CanExecuteOpenRegistryKeyCommand()
+        {
+            return !string.IsNullOrEmpty(ClonedModel.ExistanceRegistryKey);
         }
 
         #endregion Private methods
