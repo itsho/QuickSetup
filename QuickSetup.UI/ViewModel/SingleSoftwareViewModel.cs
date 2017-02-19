@@ -33,7 +33,7 @@ namespace QuickSetup.UI.ViewModel
 
         #region CTOR
 
-        public SingleSoftwareViewModel(SingleSoftwareModel p_singleSoftwareModel)
+        public SingleSoftwareViewModel(SingleSoftwareModel p_singleSoftwareModel, List<string> p_lstPossibleCategories)
         {
             if (p_singleSoftwareModel == null)
             {
@@ -57,6 +57,11 @@ namespace QuickSetup.UI.ViewModel
             RefreshSoftwareInstallStatusEnum();
 
             ListOfIso6392 = Dal.LoadListOfLanguagesIso6392();
+            PossibleCategories = new List<string>();
+            if (p_lstPossibleCategories != null)
+            {
+                PossibleCategories.AddRange(p_lstPossibleCategories);
+            }
         }
 
         #endregion CTOR
@@ -65,13 +70,15 @@ namespace QuickSetup.UI.ViewModel
 
         public event CloseWindowRequested OnCloseWindowRequested;
 
-        public delegate void CloseWindowRequested();
+        public delegate void CloseWindowRequested(bool p_blnIsSaveRequested);
 
         public SingleSoftwareModel ClonedModel { get; private set; }
 
         public SingleSoftwareModel OriginalModel { get; private set; }
 
         public Dictionary<string, string> ListOfIso6392 { get; private set; }
+
+        public List<string> PossibleCategories { get; private set; }
 
         public ICommand InstallCommand { get; private set; }
 
@@ -224,17 +231,20 @@ namespace QuickSetup.UI.ViewModel
 
         private void OnSaveChangesAndCloseCommand()
         {
+            // copy all values to original model
             OriginalModel.CopyDataFrom(ClonedModel);
             RaisePropertyChanged(nameof(OriginalModel));
 
+            // check if software is installed on local machine
             RefreshSoftwareInstallStatusEnum();
 
-            RaiseCloseWindowRequested();
+            // notify main model that the window is closed
+            RaiseCloseWindowRequested(true);
         }
 
         private void OnDiscardAndCloseCommand()
         {
-            RaiseCloseWindowRequested();
+            RaiseCloseWindowRequested(false);
         }
 
         private void OnBrowseToSelectSetupFileCommand()
@@ -385,9 +395,9 @@ namespace QuickSetup.UI.ViewModel
             }
         }
 
-        protected virtual void RaiseCloseWindowRequested()
+        protected virtual void RaiseCloseWindowRequested(bool p_blnIsSaveRequested)
         {
-            OnCloseWindowRequested?.Invoke();
+            OnCloseWindowRequested?.Invoke(p_blnIsSaveRequested);
         }
 
         #endregion public methods

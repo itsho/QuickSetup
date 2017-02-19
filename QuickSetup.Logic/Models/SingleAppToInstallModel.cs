@@ -1,4 +1,5 @@
-﻿using System;
+﻿using QuickSetup.Logic.Infra;
+using System;
 using System.Diagnostics;
 
 namespace QuickSetup.Logic.Models
@@ -15,6 +16,8 @@ namespace QuickSetup.Logic.Models
         /// fre
         /// </summary>
         public string LangCodeIso6392 { get; set; }
+
+        public string Category { get; set; }
 
         public string NotesToolTip { get; set; }
 
@@ -56,20 +59,23 @@ namespace QuickSetup.Logic.Models
 
         public void CopyDataFrom(SingleSoftwareModel p_modelSource)
         {
-            SoftwareName = p_modelSource.SoftwareName;
-            LangCodeIso6392 = p_modelSource.LangCodeIso6392;
-            NotesToolTip = p_modelSource.NotesToolTip;
+            try
+            {
+                var lstProp = typeof(SingleSoftwareModel).GetProperties();
 
-            ExistanceFilePath = p_modelSource.ExistanceFilePath;
-            ExistanceFileMd5Hash = p_modelSource.ExistanceFileMd5Hash;
+                foreach (var propertyInfo in lstProp)
+                {
+                    // get value from 'Source' instance
+                    var valOrig = propertyInfo.GetValue(p_modelSource, null);
 
-            ExistanceRegistryKey = p_modelSource.ExistanceRegistryKey;
-            ExistanceRegistryValue = p_modelSource.ExistanceRegistryValue;
-
-            SetupFolder = p_modelSource.SetupFolder;
-            SetupFileName = p_modelSource.SetupFileName;
-            SetupSilentParams = p_modelSource.SetupSilentParams;
-            IsMsiSetup = p_modelSource.IsMsiSetup;
+                    // set value in 'Target' instance (current)
+                    propertyInfo.SetValue(this, valOrig);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log.Error("Internal error - Unable to Copy data from SingleSoftwareModel: ", ex);
+            }
         }
     }
 }
