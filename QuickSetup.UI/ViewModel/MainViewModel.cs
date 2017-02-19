@@ -4,6 +4,7 @@ using log4net.Config;
 using QuickSetup.Logic.Infra;
 using QuickSetup.Logic.Models;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
@@ -35,6 +36,7 @@ namespace QuickSetup.UI.ViewModel
         private string _strLogOutput;
         private readonly DispatcherTimer _tmrLogRefresh = new DispatcherTimer();
         private SingleSoftwareViewModel _selectedSoftware;
+        private List<string> _lstPossibleCategories = new List<string>();
 
         #endregion data members
 
@@ -57,7 +59,7 @@ namespace QuickSetup.UI.ViewModel
 
                 var lstRandomName = Constants.LOREM_IPSUM.Split(' ');
                 var randGen = new Random();
-
+                var lstPossibleCategories = new List<string>() { "Documents", "Graphics", "Dev" };
                 for (int intTemp = 0; intTemp < 4; intTemp++)
                 {
                     SoftwareList.Add(new SingleSoftwareViewModel(new SingleSoftwareModel()
@@ -71,7 +73,8 @@ namespace QuickSetup.UI.ViewModel
                         SetupFolder = @"\\NetworkShare\Setup\Acrobat\Reader",
                         SetupFileName = "setup.exe",
                         SetupSilentParams = "/q"
-                    }));
+                    },
+                    lstPossibleCategories));
                 }
 
                 #endregion design mode
@@ -82,10 +85,13 @@ namespace QuickSetup.UI.ViewModel
                 InitLog4NetOutputToWindow();
 
                 SoftwareList.Clear();
-                foreach (var singleModel in Dal.LoadAll())
+                var lstAllSoftwares = Dal.LoadAll();
+
+                foreach (var singleModel in lstAllSoftwares)
                 {
-                    SoftwareList.Add(new SingleSoftwareViewModel(singleModel));
+                    SoftwareList.Add(new SingleSoftwareViewModel(singleModel, _lstPossibleCategories));
                 }
+                RefreshCateogriesList();
 
 #if DEBUG
                 IsDev = true;
@@ -206,6 +212,8 @@ namespace QuickSetup.UI.ViewModel
         {
             var tempListToSave = SoftwareList.Select(appVm => appVm.ClonedModel).ToList();
             Dal.SaveAll(tempListToSave);
+
+            RefreshCateogriesList();
         }
 
         private void OnLoadAllApps()
@@ -213,7 +221,7 @@ namespace QuickSetup.UI.ViewModel
             SoftwareList.Clear();
             foreach (var singleModel in Dal.LoadAll())
             {
-                SoftwareList.Add(new SingleSoftwareViewModel(singleModel));
+                SoftwareList.Add(new SingleSoftwareViewModel(singleModel, _lstPossibleCategories));
             }
         }
 
@@ -224,7 +232,8 @@ namespace QuickSetup.UI.ViewModel
                 var newSoft = new SingleSoftwareViewModel(new SingleSoftwareModel()
                 {
                     SoftwareName = "New"
-                });
+                },
+                _lstPossibleCategories);
 
                 SoftwareList.Add(newSoft);
 
@@ -241,6 +250,22 @@ namespace QuickSetup.UI.ViewModel
             catch (Exception ex)
             {
                 Logger.Log.Error("Error while adding new software", ex);
+            }
+        }
+
+        public void RefreshCateogriesList()
+        {
+            try
+            {
+                _lstPossibleCategories.Clear();
+                _lstPossibleCategories.AddRange(
+                    SoftwareList.Where(s => !string.IsNullOrWhiteSpace(s.OriginalModel.Category))
+                        .Select(s => s.OriginalModel.Category)
+                        .ToList());
+            }
+            catch (Exception ex)
+            {
+                Logger.Log.Error("Error refreshing inner categories list", ex);
             }
         }
 

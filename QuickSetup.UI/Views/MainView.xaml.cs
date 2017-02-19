@@ -72,8 +72,20 @@ namespace QuickSetup.UI.Views
                     var singleSoftwareViewModel = p_notificationMessage.Sender as SingleSoftwareViewModel;
                     if (singleSoftwareViewModel != null)
                     {
-                        singleSoftwareViewModel.OnCloseWindowRequested += () =>
+                        singleSoftwareViewModel.OnCloseWindowRequested += (p_blnIsSaveRequested) =>
                         {
+                            // if user clicked on save
+                            if (p_blnIsSaveRequested)
+                            {
+                                var mvm = DataContext as MainViewModel;
+                                if (mvm != null)
+                                {
+                                    if (mvm.SaveAllApps.CanExecute(null))
+                                    {
+                                        mvm.SaveAllApps.Execute(null);
+                                    }
+                                }
+                            }
                             ssv.Close();
                         };
                     }
