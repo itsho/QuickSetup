@@ -10,6 +10,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Windows.Input;
 
@@ -271,7 +272,7 @@ namespace QuickSetup.UI.ViewModel
         {
             try
             {
-                // I want to avoid RegJump since I'm not sure if the way i'm using it is allowed
+                // I want to avoid RegJump since I'm not sure if the way i'm using it is allowed for distribution
 
                 var lstProcRegEdit = Process.GetProcessesByName("regedit");
                 if (lstProcRegEdit.Length > 0)
@@ -289,8 +290,12 @@ namespace QuickSetup.UI.ViewModel
                         RegistryKeyPermissionCheck.ReadWriteSubTree);
                 if (keyRegedit != null)
                 {
+                    var arrRegPath = ClonedModel.ExistanceRegistryKey.Split('\\');
+
+                    // remove reg value to get the key alone
+                    var strPathKey = ClonedModel.ExistanceRegistryKey.Replace("\\" + arrRegPath.LastOrDefault(), string.Empty);
                     // set LastKey value
-                    keyRegedit.SetValue("LastKey", ClonedModel.ExistanceRegistryKey, RegistryValueKind.String);
+                    keyRegedit.SetValue("LastKey", strPathKey, RegistryValueKind.String);
                 }
 
                 // start regedit

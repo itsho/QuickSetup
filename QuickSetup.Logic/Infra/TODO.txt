@@ -18,6 +18,10 @@ TODO:
 	> ? - unknown issue
 
 * to display fake progress - check if setup file is in use
+* windows full version at bottom + 86/64 + check for updates button
+* windows activation status
+* office full version  + check for updates button
+* Hard drive(s) statuses by using S.M.A.R.T. http://stackoverflow.com/questions/14688589/c-sharp-wmi-hdd-s-m-a-r-t
 
 * link to open "install new lang" - run "Lpksetup"
 * ability to set lang for non-unicode program or open this screen ("region")
@@ -39,9 +43,7 @@ control.exe "intl.cpl,,/f:`"c:\myregionalcfg.xml`""
 
 * file association window
 * default browser
-* windows activation status
 * auto refresh every X seconds
-* windows version at bottom + 86/64
 * find installed toolbars and display warning
 * chrome adblock?
 * ff adblock?

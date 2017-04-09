@@ -4,7 +4,9 @@
                       xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
                       xmlns:converters="clr-namespace:QuickSetup.UI.Resources.Converters"
                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                      xmlns:enums="clr-namespace:QuickSetup.Logic.Infra.Enums;assembly=QuickSetup.Logic"
                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                      xmlns:sys="clr-namespace:System;assembly=mscorlib"
                       xmlns:viewModel="clr-namespace:QuickSetup.UI.ViewModel"
                       xmlns:xcdg="http://schemas.xceed.com/wpf/xaml/datagrid"
                       Title="Quick Setup"
@@ -29,6 +31,14 @@
 
             <!--<VisualBrush x:Key="SaveIcon" Visual="{StaticResource appbar_save}" />-->
             <converters:SoftwareStatusToImageConverter x:Key="MySoftwareStatusToImageConverter" />
+
+            <ObjectDataProvider x:Key="MySoftwareInstallStatusEnum"
+                                MethodName="GetValues"
+                                ObjectType="{x:Type sys:Enum}">
+                <ObjectDataProvider.MethodParameters>
+                    <x:Type TypeName="enums:SoftwareInstallStatusEnum" />
+                </ObjectDataProvider.MethodParameters>
+            </ObjectDataProvider>
         </ResourceDictionary>
     </Window.Resources>
 
@@ -97,7 +107,9 @@
                                     <VisualBrush Visual="{StaticResource appbar_add}" />
                                 </Rectangle.Fill>
                             </Rectangle>
-                            <TextBlock VerticalAlignment="Center" Text="Add New" />
+                            <TextBlock Margin="5,0"
+                                       VerticalAlignment="Center"
+                                       Text="Add New" />
                         </StackPanel>
                     </Button>
 
@@ -109,7 +121,9 @@
                                     <VisualBrush Visual="{StaticResource appbar_book_open}" />
                                 </Rectangle.Fill>
                             </Rectangle>
-                            <TextBlock VerticalAlignment="Center" Text="Load" />
+                            <TextBlock Margin="5,0"
+                                       VerticalAlignment="Center"
+                                       Text="Load" />
                         </StackPanel>
                     </Button>
                     <Button Command="{Binding Path=SaveAllApps, Mode=OneWay}">
@@ -119,7 +133,9 @@
                                     <VisualBrush Visual="{StaticResource appbar_save}" />
                                 </Rectangle.Fill>
                             </Rectangle>
-                            <TextBlock VerticalAlignment="Center" Text="Save" />
+                            <TextBlock Margin="5,0"
+                                       VerticalAlignment="Center"
+                                       Text="Save" />
                         </StackPanel>
                     </Button>
                 </ToolBar>
@@ -134,7 +150,7 @@
                                                              UpdateSourceTrigger=PropertyChanged}">
 
                     <xcdg:DataGridControl.View>
-                        <xcdg:TableflowView ContainerHeight="35" ShowRowSelectorPane="False" />
+                        <xcdg:TableflowView ContainerHeight="55" ShowRowSelectorPane="False" />
                     </xcdg:DataGridControl.View>
 
                     <xcdg:DataGridControl.Columns>
@@ -159,26 +175,30 @@
                             <xcdg:Column.CellContentTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="{Binding}" ToolTip="{Binding Path=OriginalModel.NotesToolTip, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        <TextBlock VerticalAlignment="Center"
+                                                   Text="{Binding}"
+                                                   ToolTip="{Binding Path=OriginalModel.NotesToolTip,
+                                                                     Mode=OneWay,
+                                                                     UpdateSourceTrigger=PropertyChanged}" />
                                         <Image Source="{Binding}" />
                                     </StackPanel>
                                 </DataTemplate>
                             </xcdg:Column.CellContentTemplate>
                         </xcdg:Column>
 
-                        <xcdg:Column Title="Language"
+                        <!--<xcdg:Column Title="Language"
                                      Width="70"
                                      FieldName="OriginalModel.LangCodeIso6392"
                                      IsMainColumn="False"
-                                     ReadOnly="True" />
+                                     ReadOnly="True" />-->
 
-                        <xcdg:Column Title="Setup Folder"
+                        <!--<xcdg:Column Title="Setup Folder"
                                      Width="180"
                                      FieldName="OriginalModel.SetupFolder"
                                      IsMainColumn="True"
                                      ReadOnly="True"
                                      Visible="{Binding Path=IsDev,
-                                                       Mode=OneWay}" />
+                                                       Mode=OneWay}" />-->
 
                         <xcdg:Column Title="Status"
                                      FieldName="Status"
@@ -186,8 +206,14 @@
                                      ReadOnly="True">
                             <xcdg:Column.CellContentTemplate>
                                 <DataTemplate>
-                                    <StackPanel Orientation="Horizontal">
-                                        <Image Source="{Binding Converter={StaticResource ResourceKey=MySoftwareStatusToImageConverter}, Mode=OneWay}" />
+                                    <StackPanel Orientation="Horizontal" ToolTip="{Binding}">
+                                        <Image Width="20"
+                                               Height="20"
+                                               Source="{Binding Converter={StaticResource ResourceKey=MySoftwareStatusToImageConverter},
+                                                                Mode=OneWay}" />
+                                        <TextBlock VerticalAlignment="Center"
+                                                   FontSize="10"
+                                                   Text="{Binding Converter={converters:EnumDescriptionConverter}}" />
                                     </StackPanel>
                                 </DataTemplate>
                             </xcdg:Column.CellContentTemplate>
@@ -206,41 +232,68 @@
                                         -->
                                         <Button MinWidth="50"
                                                 Margin="3,0,3,0"
-                                                Background="Yellow"
                                                 Click="ButtonInstall_OnClick"
-                                                Padding="0">
-                                            <Rectangle Width="20" Height="20">
-                                                <Rectangle.Fill>
-                                                    <VisualBrush Visual="{StaticResource appbar_cabinet_in}" />
-                                                </Rectangle.Fill>
-                                            </Rectangle>
+                                                Padding="0"
+                                                ToolTip="Install">
+                                            <Button.Template>
+                                                <ControlTemplate>
+                                                    <Rectangle Width="30"
+                                                               Height="30"
+                                                               Stroke="LightYellow">
+                                                        <Rectangle.Fill>
+                                                            <VisualBrush Visual="{StaticResource appbar_cabinet_in}" />
+                                                        </Rectangle.Fill>
+                                                    </Rectangle>
+                                                </ControlTemplate>
+                                            </Button.Template>
                                         </Button>
 
                                         <!--
                                             Commands are not working with Xceed UnboundColumn. no idea why
                                             Command="{Binding Path=DataGridContext.EditAppCommand}"
                                         -->
-                                        <Button MinWidth="50"
-                                                Margin="3,0,3,0"
-                                                Click="ButtonEdit_OnClick"
-                                                Padding="0">
-                                            <Rectangle Width="20" Height="20">
-                                                <Rectangle.Fill>
-                                                    <VisualBrush Visual="{StaticResource appbar_edit}" />
-                                                </Rectangle.Fill>
-                                            </Rectangle>
-                                        </Button>
+                                        <StackPanel>
+                                            <Button MinWidth="50"
+                                                    Click="ButtonEdit_OnClick"
+                                                    Padding="0"
+                                                    ToolTip="Edit Setup Settings">
+                                                <Button.Template>
+                                                    <ControlTemplate>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <Rectangle Width="13" Height="13">
 
-                                        <Button MinWidth="50"
-                                                Margin="3,0,3,0"
-                                                Click="ButtonRemove_OnClick"
-                                                Padding="0">
-                                            <Rectangle Width="20" Height="20">
-                                                <Rectangle.Fill>
-                                                    <VisualBrush Visual="{StaticResource appbar_app_remove}" />
-                                                </Rectangle.Fill>
-                                            </Rectangle>
-                                        </Button>
+                                                                <Rectangle.Fill>
+                                                                    <VisualBrush Visual="{StaticResource appbar_edit}" />
+                                                                </Rectangle.Fill>
+                                                            </Rectangle>
+                                                            <TextBlock Margin="3,0"
+                                                                       VerticalAlignment="Center"
+                                                                       Text="Edit" />
+                                                        </StackPanel>
+                                                    </ControlTemplate>
+                                                </Button.Template>
+                                            </Button>
+
+                                            <Button MinWidth="50"
+                                                    Click="ButtonRemove_OnClick"
+                                                    Padding="0"
+                                                    ToolTip="Uninstall">
+                                                <Button.Template>
+                                                    <ControlTemplate>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <Rectangle Width="12" Height="12">
+                                                                <Rectangle.Fill>
+                                                                    <VisualBrush Visual="{StaticResource appbar_app_remove}" />
+                                                                </Rectangle.Fill>
+                                                            </Rectangle>
+                                                            <TextBlock Margin="3,0"
+                                                                       VerticalAlignment="Center"
+                                                                       Text="Uninstall" />
+                                                        </StackPanel>
+                                                    </ControlTemplate>
+                                                </Button.Template>
+                                            </Button>
+                                        </StackPanel>
                                     </StackPanel>
                                 </DataTemplate>
                             </xcdg:UnboundColumn.CellContentTemplate>
