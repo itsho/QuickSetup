@@ -15,59 +15,100 @@
                       ResizeMode="CanResizeWithGrip"
                       SizeToContent="Height"
                       mc:Ignorable="d">
+    <controls:MetroWindow.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+    </controls:MetroWindow.Resources>
 
     <StackPanel Margin="10">
-        <TextBlock>
-            <Rectangle Width="20" Height="20">
-                <Rectangle.Fill>
-                    <VisualBrush Visual="{StaticResource appbar_os_windows_8}" />
-                </Rectangle.Fill>
-            </Rectangle>
-            <Run Text="Software Name" />
-        </TextBlock>
-        <TextBox FontWeight="Bold" Text="{Binding Path=ClonedModel.SoftwareName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
-        <Separator />
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
 
-        <TextBlock>
-            <Rectangle Width="20" Height="20">
-                <Rectangle.Fill>
-                    <VisualBrush Visual="{StaticResource appbar_globe}" />
-                </Rectangle.Fill>
-            </Rectangle>
-            <Run Text="Language" />
-        </TextBlock>
-        <ComboBox DisplayMemberPath="Value"
-                  ItemsSource="{Binding Path=ListOfIso6392,
-                                        Mode=OneWay}"
-                  SelectedValue="{Binding Path=ClonedModel.LangCodeIso6392,
-                                          UpdateSourceTrigger=PropertyChanged,
-                                          Mode=TwoWay}"
-                  Text="{Binding Path=ClonedModel.LangCodeIso6392,
-                                 UpdateSourceTrigger=PropertyChanged,
-                                 Mode=TwoWay}" />
-        <Separator />
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
 
-        <TextBlock>
-            <Rectangle Width="20" Height="15">
-                <Rectangle.Fill>
-                    <VisualBrush Visual="{StaticResource appbar_input_question}" />
-                </Rectangle.Fill>
-            </Rectangle>
-            <Run Text="Category" />
-        </TextBlock>
-        <ComboBox ItemsSource="{Binding Path=PossibleCategories, Mode=OneTime}" Text="{Binding Path=ClonedModel.Category, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" IsEditable="True" />
-        <Separator />
+            <TextBlock Grid.Row="0"
+                       Grid.Column="0"
+                       VerticalAlignment="Center">
+                <Rectangle Width="20" Height="20">
+                    <Rectangle.Fill>
+                        <VisualBrush Visual="{StaticResource appbar_os_windows_8}" />
+                    </Rectangle.Fill>
+                </Rectangle>
+                <Run Text="Software Name" />
+            </TextBlock>
+            <TextBox Grid.Row="0"
+                     Grid.Column="1"
+                     FontWeight="Bold"
+                     Text="{Binding Path=ClonedModel.SoftwareName,
+                                    UpdateSourceTrigger=PropertyChanged,
+                                    Mode=TwoWay}" />
 
-        <TextBlock>
-            <Rectangle Width="20" Height="20">
-                <Rectangle.Fill>
-                    <VisualBrush Visual="{StaticResource appbar_notification_above_multiple}" />
-                </Rectangle.Fill>
-            </Rectangle>
-            <Run Text="Notes To display in Tooltip" />
-        </TextBlock>
-        <TextBox Text="{Binding Path=ClonedModel.NotesToolTip, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
-        <Separator />
+            <TextBlock Grid.Row="1"
+                       Grid.Column="0"
+                       VerticalAlignment="Center">
+                <Rectangle Width="20" Height="20">
+                    <Rectangle.Fill>
+                        <VisualBrush Visual="{StaticResource appbar_globe}" />
+                    </Rectangle.Fill>
+                </Rectangle>
+                <Run Text="Language" />
+            </TextBlock>
+            <ComboBox Grid.Row="1"
+                      Grid.Column="1"
+                      DisplayMemberPath="Value"
+                      ItemsSource="{Binding Path=ListOfIso6392,
+                                            Mode=OneWay}"
+                      SelectedValue="{Binding Path=ClonedModel.LangCodeIso6392,
+                                              UpdateSourceTrigger=PropertyChanged,
+                                              Mode=TwoWay}"
+                      Text="{Binding Path=ClonedModel.LangCodeIso6392,
+                                     UpdateSourceTrigger=PropertyChanged,
+                                     Mode=TwoWay}" />
+
+            <TextBlock Grid.Row="2"
+                       Grid.Column="0"
+                       VerticalAlignment="Center">
+                <Rectangle Width="20" Height="15">
+                    <Rectangle.Fill>
+                        <VisualBrush Visual="{StaticResource appbar_input_question}" />
+                    </Rectangle.Fill>
+                </Rectangle>
+                <Run Text="Category" />
+            </TextBlock>
+            <ComboBox Grid.Row="2"
+                      Grid.Column="1"
+                      IsEditable="True"
+                      ItemsSource="{Binding Path=PossibleCategories,
+                                            Mode=OneTime}"
+                      Text="{Binding Path=ClonedModel.Category,
+                                     UpdateSourceTrigger=PropertyChanged,
+                                     Mode=TwoWay}" />
+
+            <TextBlock Grid.Row="3"
+                       Grid.Column="0"
+                       VerticalAlignment="Center">
+                <Rectangle Width="20" Height="20">
+                    <Rectangle.Fill>
+                        <VisualBrush Visual="{StaticResource appbar_notification_above_multiple}" />
+                    </Rectangle.Fill>
+                </Rectangle>
+                <Run Text="Notes" />
+            </TextBlock>
+            <TextBox Grid.Row="3"
+                     Grid.Column="1"
+                     Text="{Binding Path=ClonedModel.NotesToolTip,
+                                    UpdateSourceTrigger=PropertyChanged,
+                                    Mode=TwoWay}" />
+        </Grid>
 
         <TabControl BorderBrush="LightGray" BorderThickness="3">
             <TabControl.Resources>
@@ -102,48 +143,68 @@
 
             <TabItem Header="Setup">
                 <StackPanel>
-                    <TextBlock Background="Yellow"
-                               FontSize="15"
-                               Text="Specify software setup location" />
+                    <TextBlock Background="LightYellow"
+                               FontSize="10"
+                               Text="Specify setup location and parameters" />
                     <Separator />
 
-                    <TextBlock>
-                        <Rectangle Width="20" Height="20">
-                            <Rectangle.Fill>
-                                <VisualBrush Visual="{StaticResource appbar_folder}" />
-                            </Rectangle.Fill>
-                        </Rectangle>
-                        <Run Text="Setup Folder" />
-                    </TextBlock>
-                    <TextBox Text="{Binding Path=ClonedModel.SetupFolder, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
-                    <Image />
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0"
+                                   Grid.Column="0"
+                                   VerticalAlignment="Center">
+                            <Rectangle Width="20" Height="20">
+                                <Rectangle.Fill>
+                                    <VisualBrush Visual="{StaticResource appbar_folder}" />
+                                </Rectangle.Fill>
+                            </Rectangle>
+                            <Run Text="Setup Folder" />
+                        </TextBlock>
+                        <TextBox Grid.Row="0"
+                                 Grid.Column="1"
+                                 Text="{Binding Path=ClonedModel.SetupFolder,
+                                                UpdateSourceTrigger=PropertyChanged,
+                                                Mode=TwoWay}" />
 
-                    <TextBlock>
-                        <Rectangle Width="20" Height="20">
-                            <Rectangle.Fill>
-                                <VisualBrush Visual="{StaticResource appbar_page}" />
-                            </Rectangle.Fill>
-                        </Rectangle>
-                        <Run Text="Setup File Name" />
-                    </TextBlock>
-                    <DockPanel>
-                        <Button MinWidth="50"
-                                Command="{Binding Path=BrowseToSelectSetupFileCommand}"
-                                DockPanel.Dock="Right">
-                            ...
-                        </Button>
-                        <TextBox Text="{Binding Path=ClonedModel.SetupFileName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
-                    </DockPanel>
+                        <TextBlock Grid.Row="1" Grid.Column="0">
+                            <Rectangle Width="20" Height="20">
+                                <Rectangle.Fill>
+                                    <VisualBrush Visual="{StaticResource appbar_page}" />
+                                </Rectangle.Fill>
+                            </Rectangle>
+                            <Run Text="Setup File Name" />
+                        </TextBlock>
+                        <DockPanel Grid.Row="1" Grid.Column="1">
+                            <Button MinWidth="50"
+                                    Command="{Binding Path=BrowseToSelectSetupFileCommand}"
+                                    DockPanel.Dock="Right">
+                                <TextBlock Text="Browse..." />
+                            </Button>
+                            <TextBox Text="{Binding Path=ClonedModel.SetupFileName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                        </DockPanel>
 
-                    <TextBlock>
-                        <Rectangle Width="20" Height="20">
-                            <Rectangle.Fill>
-                                <VisualBrush Visual="{StaticResource appbar_sound_mute}" />
-                            </Rectangle.Fill>
-                        </Rectangle>
-                        <Run Text="Setup Silent Params" />
-                    </TextBlock>
-                    <TextBox Text="{Binding Path=ClonedModel.SetupSilentParams, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                        <TextBlock Grid.Row="2" Grid.Column="0">
+                            <Rectangle Width="20" Height="20">
+                                <Rectangle.Fill>
+                                    <VisualBrush Visual="{StaticResource appbar_sound_mute}" />
+                                </Rectangle.Fill>
+                            </Rectangle>
+                            <Run Text="Setup Silent Params" />
+                        </TextBlock>
+                        <TextBox Grid.Row="2"
+                                 Grid.Column="1"
+                                 Text="{Binding Path=ClonedModel.SetupSilentParams,
+                                                UpdateSourceTrigger=PropertyChanged,
+                                                Mode=TwoWay}" />
+                    </Grid>
 
                     <Separator />
 
@@ -158,54 +219,87 @@
                      Header="Registry"
                      ToolTip="Registry Key&amp;Value to check if software is installed">
                 <StackPanel>
-                    <TextBlock Background="Yellow"
-                               FontSize="15"
+                    <TextBlock Background="LightYellow"
+                               FontSize="10"
                                Text="Specify Registry path to check if this software is installed" />
                     <Separator />
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
 
-                    <TextBlock Text="Existance Registry Key" />
-                    <DockPanel>
-                        <Button Command="{Binding Path=OpenRegistryKeyCommand}"
-                                DockPanel.Dock="Right"
-                                ToolTip="Will try to translate path to Environment variable as possible">
-                            <TextBlock Text="Open Registry..." />
-                        </Button>
-                        <TextBox Text="{Binding Path=ClonedModel.ExistanceRegistryKey, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
-                    </DockPanel>
-                    <TextBlock Text="Existance Registry Value" />
-                    <TextBox Text="{Binding Path=ClonedModel.ExistanceRegistryValue, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0"
+                                   Grid.Column="0"
+                                   Text="Existance Registry Key" />
+                        <DockPanel Grid.Row="0" Grid.Column="1">
+                            <Button Command="{Binding Path=OpenRegistryKeyCommand}" DockPanel.Dock="Right">
+                                <TextBlock Text="Browse..." />
+                            </Button>
+                            <TextBox Text="{Binding Path=ClonedModel.ExistanceRegistryKey, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                        </DockPanel>
+                        <TextBlock Grid.Row="1"
+                                   Grid.Column="0"
+                                   Text="Existance Registry Value" />
+                        <TextBox Grid.Row="1"
+                                 Grid.Column="1"
+                                 Text="{Binding Path=ClonedModel.ExistanceRegistryValue,
+                                                UpdateSourceTrigger=PropertyChanged,
+                                                Mode=TwoWay}" />
+                    </Grid>
                 </StackPanel>
             </TabItem>
             <TabItem Header="File" ToolTip="File path to check if software is installed">
                 <StackPanel>
-                    <TextBlock Background="Yellow"
-                               FontSize="15"
+                    <TextBlock Background="LightYellow"
+                               FontSize="10"
                                Text="Specify file path to check if this software is installed" />
                     <Separator />
 
-                    <TextBlock>
-                        <Run Text="Existance File Path" />
-                        <LineBreak />
-                        <Run FontSize="7" Text="Use Environment variable as possible: %AppData%, %ProgramFiles%, etc.." />
-                    </TextBlock>
-                    <DockPanel>
-                        <Button Command="{Binding Path=TranslatePathToEnvVarCommand}"
-                                DockPanel.Dock="Right"
-                                ToolTip="Will try to translate path to Environment variable as possible">
-                            <TextBlock Text="Translate to EnvVar..." />
-                        </Button>
-                        <TextBox Text="{Binding Path=ClonedModel.ExistanceFilePath, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
-                    </DockPanel>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
 
-                    <TextBlock Text="File MD5 Hash" />
-                    <DockPanel>
-                        <Button Command="{Binding Path=CalculateMD5OfExistanceFilePathCommand}"
-                                DockPanel.Dock="Right"
-                                ToolTip="Calculate MD5 of selected file">
-                            <TextBlock Text="Calculate MD5..." />
-                        </Button>
-                        <TextBox Text="{Binding Path=ClonedModel.ExistanceFileMd5Hash, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
-                    </DockPanel>
+                        <TextBlock Grid.Row="0" Grid.Column="0">
+                            <Run Text="Existance File Path" />
+                            <LineBreak />
+                            <Run FontSize="7" Text="Use Environment when possible: " />
+                            <LineBreak />
+                            <Run FontSize="7" Text="%AppData%, %ProgramFiles%, etc.." />
+                        </TextBlock>
+                        <DockPanel Grid.Row="0" Grid.Column="1">
+                            <Button Command="{Binding Path=TranslatePathToEnvVarCommand}"
+                                    DockPanel.Dock="Right"
+                                    ToolTip="Will try to translate path to Environment variable as possible">
+                                <TextBlock Text="Translate to EnvVar..." />
+                            </Button>
+                            <TextBox Text="{Binding Path=ClonedModel.ExistanceFilePath, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                        </DockPanel>
+
+                        <TextBlock Grid.Row="1"
+                                   Grid.Column="0"
+                                   Text="File MD5 Hash" />
+                        <DockPanel Grid.Row="1" Grid.Column="1">
+                            <Button Command="{Binding Path=CalculateMD5OfExistanceFilePathCommand}"
+                                    DockPanel.Dock="Right"
+                                    ToolTip="Calculate MD5 of selected file">
+                                <TextBlock Text="Calculate MD5..." />
+                            </Button>
+                            <TextBox Text="{Binding Path=ClonedModel.ExistanceFileMd5Hash, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                        </DockPanel>
+                    </Grid>
                 </StackPanel>
             </TabItem>
         </TabControl>
@@ -218,22 +312,30 @@
                     Command="{Binding Path=SaveChangesAndCloseCommand}"
                     IsDefault="True"
                     ToolTip="Save changes and close window">
-                <Rectangle Width="30" Height="30">
-                    <Rectangle.Fill>
-                        <VisualBrush Visual="{StaticResource appbar_save}" />
-                    </Rectangle.Fill>
-                </Rectangle>
+                <Button.Template>
+                    <ControlTemplate>
+                        <Rectangle Width="30" Height="30">
+                            <Rectangle.Fill>
+                                <VisualBrush Visual="{StaticResource appbar_save}" />
+                            </Rectangle.Fill>
+                        </Rectangle>
+                    </ControlTemplate>
+                </Button.Template>
             </Button>
 
             <Button Margin="5"
                     Command="{Binding Path=DiscardAndCloseCommand}"
                     IsCancel="True"
                     ToolTip="Discard changes and close window">
-                <Rectangle Width="30" Height="30">
-                    <Rectangle.Fill>
-                        <VisualBrush Visual="{StaticResource appbar_close}" />
-                    </Rectangle.Fill>
-                </Rectangle>
+                <Button.Template>
+                    <ControlTemplate>
+                        <Rectangle Width="30" Height="30">
+                            <Rectangle.Fill>
+                                <VisualBrush Visual="{StaticResource appbar_close}" />
+                            </Rectangle.Fill>
+                        </Rectangle>
+                    </ControlTemplate>
+                </Button.Template>
             </Button>
         </StackPanel>
     </StackPanel>

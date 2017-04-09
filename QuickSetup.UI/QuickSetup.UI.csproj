@@ -110,6 +110,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Resources\Converters\EnumDescriptionConverter.cs" />
     <Compile Include="Resources\Converters\SoftwareStatusToImageConverter.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\SingleSoftwareViewModel.cs" />
