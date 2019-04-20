@@ -1,13 +1,15 @@
-﻿using QuickSetup.Logic.Infra;
+﻿using Newtonsoft.Json;
+using QuickSetup.Logic.Infra;
 using System;
 using System.Diagnostics;
+using System.IO;
 
 namespace QuickSetup.Logic.Models
 {
-    [DebuggerDisplay("Name {SoftwareName}  |  HasReg {ExistanceRegistryKey != string.Empty}  |  HasFile:{ExistanceFilePath != string.Empty}")]
+    [DebuggerDisplay("Name {AppName}  |  HasReg {ExistenceCheckRegistryKey != string.Empty}  |  HasFile:{ExistenceCheckFilePath != string.Empty}")]
     public class SingleSoftwareModel : IComparable<SingleSoftwareModel>
     {
-        public string SoftwareName { get; set; }
+        public string AppName { get; set; }
 
         /// <summary>
         /// https://www.loc.gov/standards/iso639-2/php/code_list.php
@@ -21,8 +23,6 @@ namespace QuickSetup.Logic.Models
 
         public string NotesToolTip { get; set; }
 
-        public string SetupFolder { get; set; }
-
         public string SetupFileName { get; set; }
 
         public string SetupSilentParams { get; set; }
@@ -33,9 +33,9 @@ namespace QuickSetup.Logic.Models
         /// </summary>
         public bool IsMsiSetup { get; set; }
 
-        public string ExistanceRegistryKey { get; set; }
+        public string ExistenceCheckRegistryKey { get; set; }
 
-        public string ExistanceRegistryValue { get; set; }
+        public string ExistenceCheckRegistryValue { get; set; }
 
         /// <summary>
         /// <para>Can use environment variables</para>
@@ -47,9 +47,9 @@ namespace QuickSetup.Logic.Models
         /// <para>%ProgramFiles(x86)%</para>
         /// <para>%SystemRoot(x86)%</para>
         /// </summary>
-        public string ExistanceFilePath { get; set; }
+        public string ExistenceCheckFilePath { get; set; }
 
-        public string ExistanceFileMd5Hash { get; set; }
+        public string ExistenceCheckFileMd5Hash { get; set; }
 
         public int CompareTo(SingleSoftwareModel other)
         {
@@ -75,6 +75,21 @@ namespace QuickSetup.Logic.Models
             catch (Exception ex)
             {
                 Logger.Log.Error("Internal error - Unable to Copy data from SingleSoftwareModel: ", ex);
+            }
+        }
+
+        public static SingleSoftwareModel LoadFromFile(FileInfo softwareSettingsFile)
+        {
+            try
+            {
+                var fileContent = File.ReadAllText(softwareSettingsFile.FullName);
+                var model = JsonConvert.DeserializeObject<SingleSoftwareModel>(fileContent);
+                return model;
+            }
+            catch (Exception ex)
+            {
+                Logger.Log.Error("Internal error - Unable to load data from softwareSettingsFile ", ex);
+                return null;
             }
         }
     }
