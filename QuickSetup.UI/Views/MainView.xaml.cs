@@ -3,10 +3,11 @@ using MahApps.Metro.Controls;
 using QuickSetup.Logic.Infra;
 using QuickSetup.UI.ViewModel;
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
-using Xceed.Wpf.DataGrid;
 
 namespace QuickSetup.UI.Views
 {
@@ -27,14 +28,15 @@ namespace QuickSetup.UI.Views
         {
             try
             {
-                Logger.Log.Debug("Install button clicked");
-                var cell = Cell.FindFromChild(p_sender as DependencyObject);
-                var singleApp = DataGridControl.GetDataGridContext(cell).GetItemFromContainer(cell.ParentRow) as SingleSoftwareViewModel;
+                Debugger.Break();
+                //Logger.Log.Debug("Install button clicked");
+                //var cell = Cell.FindFromChild(p_sender as DependencyObject);
+                //var singleApp = DataGridControl.GetDataGridContext(cell).GetItemFromContainer(cell.ParentRow) as SingleSoftwareViewModel;
 
-                if (singleApp != null && singleApp.InstallCommand.CanExecute(null))
-                {
-                    singleApp.InstallCommand.Execute(null);
-                }
+                //if (singleApp != null && singleApp.InstallCommand.CanExecute(null))
+                //{
+                //    singleApp.InstallCommand.Execute(null);
+                //}
             }
             catch (Exception ex)
             {
@@ -46,14 +48,15 @@ namespace QuickSetup.UI.Views
         {
             try
             {
-                Logger.Log.Debug("Edit button clicked");
-                var cell = Cell.FindFromChild(p_sender as DependencyObject);
-                var singleApp = DataGridControl.GetDataGridContext(cell).GetItemFromContainer(cell.ParentRow) as SingleSoftwareViewModel;
+                Debugger.Break();
+                //Logger.Log.Debug("Edit button clicked");
+                //var cell = Cell.FindFromChild(p_sender as DependencyObject);
+                //var singleApp = DataGridControl.GetDataGridContext(cell).GetItemFromContainer(cell.ParentRow) as SingleSoftwareViewModel;
 
-                if (singleApp != null && singleApp.EditSoftwareCommand.CanExecute(null))
-                {
-                    singleApp.EditSoftwareCommand.Execute(null);
-                }
+                //if (singleApp != null && singleApp.EditSoftwareCommand.CanExecute(null))
+                //{
+                //    singleApp.EditSoftwareCommand.Execute(null);
+                //}
             }
             catch (Exception ex)
             {
@@ -80,10 +83,12 @@ namespace QuickSetup.UI.Views
                                 var mvm = DataContext as MainViewModel;
                                 if (mvm != null)
                                 {
-                                    if (mvm.SaveAllApps.CanExecute(null))
-                                    {
-                                        mvm.SaveAllApps.Execute(null);
-                                    }
+                                    Debugger.Break();
+
+                                    //if (mvm.SaveAllApps.CanExecute(null))
+                                    //{
+                                    //    mvm.SaveAllApps.Execute(null);
+                                    //}
                                 }
                             }
                             ssv.Close();
@@ -104,6 +109,8 @@ namespace QuickSetup.UI.Views
         {
             try
             {
+                Debugger.Break();
+
                 Logger.Log.Debug("Remove button clicked");
 
                 var res = MessageBox.Show("Are you sure you want to remove the software?", Constants.APPLICATIONNAME,
@@ -111,7 +118,7 @@ namespace QuickSetup.UI.Views
 
                 if (res == MessageBoxResult.Yes)
                 {
-                    var cell = Cell.FindFromChild(p_sender as DependencyObject);
+                    /*var cell = Cell.FindFromChild(p_sender as DependencyObject);
                     var singleApp =
                         DataGridControl.GetDataGridContext(cell).GetItemFromContainer(cell.ParentRow) as
                             SingleSoftwareViewModel;
@@ -121,7 +128,7 @@ namespace QuickSetup.UI.Views
                     {
                         mvm.SoftwareList.Remove(singleApp);
                         mvm.SelectedSoftware = mvm.SoftwareList.FirstOrDefault();
-                    }
+                    }*/
                 }
             }
             catch (Exception ex)
@@ -129,5 +136,7 @@ namespace QuickSetup.UI.Views
                 Logger.Log.Error("Error while trying to Remove software", ex);
             }
         }
+
+       
     }
 }

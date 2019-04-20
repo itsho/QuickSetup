@@ -2,13 +2,10 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using log4net.Config;
 using QuickSetup.Logic.Infra;
-using QuickSetup.Logic.Models;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Text;
 
 using System.Windows.Input;
@@ -30,13 +27,14 @@ namespace QuickSetup.UI.ViewModel
     /// </summary>
     public class MainViewModel : ViewModelBase
     {
+        private const string APPLICATION_QS_FILE = "QSSetting.json";
+
         #region data members
 
+        private string _workingFolder = null;
         private StringBuilder _logbuilderToScreen = null;
         private string _strLogOutput;
         private readonly DispatcherTimer _tmrLogRefresh = new DispatcherTimer();
-        private SingleSoftwareViewModel _selectedSoftware;
-        private List<string> _lstPossibleCategories = new List<string>();
 
         #endregion data members
 
@@ -47,35 +45,40 @@ namespace QuickSetup.UI.ViewModel
         /// </summary>
         public MainViewModel()
         {
-            SoftwareList = new ObservableCollection<SingleSoftwareViewModel>();
-            SaveAllApps = new RelayCommand(OnSaveAllApps);
-            LoadAllApps = new RelayCommand(OnLoadAllApps);
-            AddNewAppCommand = new RelayCommand(OnAddNewAppCommand);
+            FoldersList = new ObservableCollection<SoftwareDirectoryViewModel>();
+
+            ScanFolderCommand = new RelayCommand(OnScanFolderCommand);
+
+            //var currFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            WorkingFolder = @"D:\Standard";
+            ShowAllFolders = true;
 
             // Code runs in Blend --> create design time data.
             if (IsInDesignMode)
             {
                 #region design mode
 
-                var lstRandomName = Constants.LOREM_IPSUM.Split(' ');
-                var randGen = new Random();
-                var lstPossibleCategories = new List<string>() { "Documents", "Graphics", "Dev" };
-                for (int intTemp = 0; intTemp < 4; intTemp++)
-                {
-                    SoftwareList.Add(new SingleSoftwareViewModel(new SingleSoftwareModel()
-                    {
-                        SoftwareName = lstRandomName[randGen.Next(lstRandomName.Length)],
-                        NotesToolTip = Constants.LOREM_IPSUM,
-                        ExistanceRegistryKey = @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion",
-                        ExistanceRegistryValue = "SM_GamesName",
-                        LangCodeIso6392 = intTemp % 2 == 0 ? "eng" : "fre",
-                        IsMsiSetup = intTemp % 3 == 0,
-                        SetupFolder = @"\\NetworkShare\Setup\Acrobat\Reader",
-                        SetupFileName = "setup.exe",
-                        SetupSilentParams = "/q"
-                    },
-                    lstPossibleCategories));
-                }
+                var sub = new SoftwareDirectoryViewModel(WorkingFolder);
+                sub.Init();
+                FoldersList.Add(sub);
+
+                //var lstRandomName = Constants.LOREM_IPSUM.Split(' ');
+                //var randGen = new Random();
+                //var lstPossibleCategories = new List<string>() { "Documents", "Graphics", "Dev" };
+
+                //SoftwareList.Add(new SingleSoftwareViewModel(new SingleSoftwareModel()
+                //{
+                //    SoftwareName = lstRandomName[randGen.Next(lstRandomName.Length)],
+                //    NotesToolTip = Constants.LOREM_IPSUM,
+                //    ExistenceRegistryKey = @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion",
+                //    ExistenceRegistryValue = "SM_GamesName",
+                //    LangCodeIso6392 = intTemp % 2 == 0 ? "eng" : "fre",
+                //    IsMsiSetup = intTemp % 3 == 0,
+                //    SetupFolder = @"\\NetworkShare\Setup\Acrobat\Reader",
+                //    SetupFileName = "setup.exe",
+                //    SetupSilentParams = "/q"
+                //},
+                //lstPossibleCategories));
 
                 #endregion design mode
             }
@@ -84,14 +87,6 @@ namespace QuickSetup.UI.ViewModel
             {
                 InitLog4NetOutputToWindow();
 
-                SoftwareList.Clear();
-                var lstAllSoftwares = Dal.LoadAll();
-
-                foreach (var singleModel in lstAllSoftwares)
-                {
-                    SoftwareList.Add(new SingleSoftwareViewModel(singleModel, _lstPossibleCategories));
-                }
-                RefreshCateogriesList();
 
 #if DEBUG
                 IsDev = true;
@@ -103,22 +98,37 @@ namespace QuickSetup.UI.ViewModel
 
         #region Properties
 
-        public ObservableCollection<SingleSoftwareViewModel> SoftwareList { get; set; }
+        public ObservableCollection<SoftwareDirectoryViewModel> FoldersList { get; private set; }
 
-        public SingleSoftwareViewModel SelectedSoftware
+        private bool _showAllFolders;
+
+        public bool ShowAllFolders
         {
-            get { return _selectedSoftware; }
+            get { return _showAllFolders; }
             set
             {
-                Set(ref _selectedSoftware, value, nameof(SelectedSoftware));
+                if (_showAllFolders != value)
+                {
+                    _showAllFolders = value;
+                    RaisePropertyChanged();
+                }
             }
         }
 
-        public ICommand SaveAllApps { get; private set; }
+        public string WorkingFolder
+        {
+            get { return _workingFolder; }
+            set
+            {
+                if (_workingFolder != value)
+                {
+                    _workingFolder = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
 
-        public ICommand LoadAllApps { get; private set; }
-
-        public ICommand AddNewAppCommand { get; private set; }
+        public ICommand ScanFolderCommand { get; private set; }
 
         public string LogOutputToWindow
         {
@@ -208,64 +218,43 @@ namespace QuickSetup.UI.ViewModel
             }
         }
 
-        private void OnSaveAllApps()
-        {
-            var tempListToSave = SoftwareList.Select(appVm => appVm.ClonedModel).ToList();
-            Dal.SaveAll(tempListToSave);
-
-            RefreshCateogriesList();
-        }
-
-        private void OnLoadAllApps()
-        {
-            SoftwareList.Clear();
-            foreach (var singleModel in Dal.LoadAll())
-            {
-                SoftwareList.Add(new SingleSoftwareViewModel(singleModel, _lstPossibleCategories));
-            }
-        }
-
-        private void OnAddNewAppCommand()
+        private void OnScanFolderCommand()
         {
             try
             {
-                var newSoft = new SingleSoftwareViewModel(new SingleSoftwareModel()
+                // scan current folder for QSSetting.json
+                var folders = ScanCurrentFolder(!ShowAllFolders);
+
+                // get folders in root folder
+                var rootSubFolders = Directory.GetDirectories(WorkingFolder, "*.", SearchOption.TopDirectoryOnly);
+
+                // create hierarchical folders list
+                foreach (var subFolder in rootSubFolders)
                 {
-                    SoftwareName = "New"
-                },
-                _lstPossibleCategories);
-
-                SoftwareList.Add(newSoft);
-
-                // TODO: scroll to selected item
-                Debugger.Break();
-                SelectedSoftware = newSoft;
-
-                // edit new soft
-                if (SelectedSoftware.EditSoftwareCommand.CanExecute(null))
-                {
-                    SelectedSoftware.EditSoftwareCommand.Execute(null);
+                    var sub = new SoftwareDirectoryViewModel(subFolder);
+                    sub.Init();
+                    FoldersList.Add(sub);
                 }
             }
             catch (Exception ex)
             {
-                Logger.Log.Error("Error while adding new software", ex);
+                Logger.Log.Error(ex);
             }
         }
 
-        public void RefreshCateogriesList()
+        private string[] ScanCurrentFolder(bool onlyFoldersWithQsFile)
         {
             try
             {
-                _lstPossibleCategories.Clear();
-                _lstPossibleCategories.AddRange(
-                    SoftwareList.Where(s => !string.IsNullOrWhiteSpace(s.OriginalModel.Category))
-                        .Select(s => s.OriginalModel.Category)
-                        .ToList());
+                // if needed, filter by QS file. otherwise, show only folders (no files)
+                var fileToSearch = onlyFoldersWithQsFile ? APPLICATION_QS_FILE : "*.";
+
+                return Directory.GetFileSystemEntries(WorkingFolder, fileToSearch, SearchOption.AllDirectories);
             }
             catch (Exception ex)
             {
-                Logger.Log.Error("Error refreshing inner categories list", ex);
+                Logger.Log.Error(ex);
+                return null;
             }
         }
 
