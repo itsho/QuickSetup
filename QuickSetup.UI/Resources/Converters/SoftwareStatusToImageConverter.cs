@@ -28,10 +28,10 @@ namespace QuickSetup.UI.Resources.Converters
                     return "pack://application:,,,/Resources/Icons-flaticon/error.png";
                 }
 
-                if (origValue == SoftwareInstallStatusEnum.Unknown)
-                {
-                    return "pack://application:,,,/Resources/Icons-flaticon/question.png";
-                }
+                //if (origValue == SoftwareInstallStatusEnum.Unknown)
+                //{
+                //    return "pack://application:,,,/Resources/Icons-flaticon/question.png";
+                //}
                 return string.Empty;
             }
             catch (Exception ex)

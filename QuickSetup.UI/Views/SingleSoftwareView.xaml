@@ -8,9 +8,7 @@
                       Title="Single Software - Edit"
                       Width="450"
                       MinWidth="400"
-                      MinHeight="500"
-                      d:DataContext="{d:DesignInstance Type=viewModel:SingleSoftwareViewModel,
-                                                       IsDesignTimeCreatable=True}"
+                      d:DataContext="{d:DesignInstance Type=viewModel:SingleSoftwareViewModel}"
                       BorderThickness="5"
                       ResizeMode="CanResizeWithGrip"
                       SizeToContent="Height"
@@ -43,7 +41,7 @@
                         <VisualBrush Visual="{StaticResource appbar_os_windows_8}" />
                     </Rectangle.Fill>
                 </Rectangle>
-                <Run Text="Software Name" />
+                <Run Text="Name" />
             </TextBlock>
             <TextBox Grid.Row="0"
                      Grid.Column="1"
@@ -141,7 +139,7 @@
                 </Style>
             </TabControl.Resources>
 
-            <TabItem Header="Setup">
+            <TabItem Header="How To Install">
                 <StackPanel>
                     <TextBlock Background="LightYellow"
                                FontSize="10"
@@ -214,47 +212,51 @@
                 </StackPanel>
             </TabItem>
 
-            <TabItem Width="88"
-                     HorizontalAlignment="Right"
-                     Header="Registry"
+            <TabItem HorizontalAlignment="Right"
+                     Header="Detect if already installed"
                      ToolTip="Registry Key&amp;Value to check if software is installed">
                 <StackPanel>
-                    <TextBlock Background="LightYellow"
-                               FontSize="10"
-                               Text="Specify Registry path to check if this software is installed" />
-                    <Separator />
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition />
+                    <GroupBox Header="By Registry">
+                        <StackPanel>
+                            <TextBlock Background="LightYellow"
+                                       FontSize="10"
+                                       Text="Specify Registry path to check if this software is installed" />
+                            <Separator />
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition />
 
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
 
-                        <TextBlock Grid.Row="0"
-                                   Grid.Column="0"
-                                   Text="Existance Registry Key" />
-                        <DockPanel Grid.Row="0" Grid.Column="1">
-                            <Button Command="{Binding Path=OpenRegistryKeyCommand}" DockPanel.Dock="Right">
-                                <TextBlock Text="Browse..." />
-                            </Button>
-                            <TextBox Text="{Binding Path=ClonedModel.ExistanceRegistryKey, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
-                        </DockPanel>
-                        <TextBlock Grid.Row="1"
-                                   Grid.Column="0"
-                                   Text="Existance Registry Value" />
-                        <TextBox Grid.Row="1"
-                                 Grid.Column="1"
-                                 Text="{Binding Path=ClonedModel.ExistanceRegistryValue,
+                                <TextBlock Grid.Row="0"
+                                           Grid.Column="0"
+                                           Text="Existence Registry Key" />
+                                <DockPanel Grid.Row="0" Grid.Column="1">
+                                    <Button Command="{Binding Path=OpenRegistryKeyCommand}" DockPanel.Dock="Right">
+                                        <TextBlock Text="Browse..." />
+                                    </Button>
+                                    <TextBox Text="{Binding Path=ClonedModel.ExistenceCheckRegistryKey, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                                </DockPanel>
+                                <TextBlock Grid.Row="1"
+                                           Grid.Column="0"
+                                           Text="Existence Registry Value" />
+                                <TextBox Grid.Row="1"
+                                         Grid.Column="1"
+                                         Text="{Binding Path=ClonedModel.ExistenceCheckRegistryValue,
                                                 UpdateSourceTrigger=PropertyChanged,
                                                 Mode=TwoWay}" />
-                    </Grid>
-                </StackPanel>
-            </TabItem>
-            <TabItem Header="File" ToolTip="File path to check if software is installed">
+                            </Grid>
+                        </StackPanel>
+
+                    </GroupBox>
+
+                    <GroupBox Header="By File">
+
                 <StackPanel>
                     <TextBlock Background="LightYellow"
                                FontSize="10"
@@ -273,7 +275,7 @@
                         </Grid.RowDefinitions>
 
                         <TextBlock Grid.Row="0" Grid.Column="0">
-                            <Run Text="Existance File Path" />
+                            <Run Text="Existence File Path" />
                             <LineBreak />
                             <Run FontSize="7" Text="Use Environment when possible: " />
                             <LineBreak />
@@ -285,23 +287,26 @@
                                     ToolTip="Will try to translate path to Environment variable as possible">
                                 <TextBlock Text="Translate to EnvVar..." />
                             </Button>
-                            <TextBox Text="{Binding Path=ClonedModel.ExistanceFilePath, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                            <TextBox Text="{Binding Path=ClonedModel.ExistenceCheckFilePath, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                         </DockPanel>
 
                         <TextBlock Grid.Row="1"
                                    Grid.Column="0"
                                    Text="File MD5 Hash" />
                         <DockPanel Grid.Row="1" Grid.Column="1">
-                            <Button Command="{Binding Path=CalculateMD5OfExistanceFilePathCommand}"
+                            <Button Command="{Binding Path=CalculateMD5OfExistenceFilePathCommand}"
                                     DockPanel.Dock="Right"
                                     ToolTip="Calculate MD5 of selected file">
                                 <TextBlock Text="Calculate MD5..." />
                             </Button>
-                            <TextBox Text="{Binding Path=ClonedModel.ExistanceFileMd5Hash, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                            <TextBox Text="{Binding Path=ClonedModel.ExistenceCheckFileMd5Hash, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                         </DockPanel>
                     </Grid>
                 </StackPanel>
+                    </GroupBox>
+                </StackPanel>
             </TabItem>
+           
         </TabControl>
 
         <Separator />
