@@ -23,7 +23,7 @@ namespace QuickSetup.Logic.Infra
             return strComputedHash;
         }
 
-        public static SingleSoftwareModel LoadSoftwareSettingsFromFile(FileInfo softwareSettingsFile)
+        public static SingleSoftwareModel LoadSingleSoftwareModelFromFile(FileInfo softwareSettingsFile)
         {
             try
             {
@@ -33,21 +33,55 @@ namespace QuickSetup.Logic.Infra
             }
             catch (Exception ex)
             {
-                Logger.Log.Error("Internal error - Unable to load data from softwareSettingsFile ", ex);
+                Logger.Log.Error("Internal error - Unable to load single app from file", ex);
                 return null;
             }
         }
 
-        public static void SaveSoftwareSettingsToFile(SingleSoftwareModel model, string fileName)
+        public static void SaveSingleSoftwareModelToFile(SingleSoftwareModel model, string fileName)
         {
             try
             {
                 var modelAsString = JsonConvert.SerializeObject(model);
                 File.WriteAllText(fileName, modelAsString);
+                Logger.Log.Info("AppSettings saved to file");
             }
             catch (Exception ex)
             {
-                Logger.Log.Error("Internal error - Unable to save data to settings file", ex);
+                Logger.Log.Error("Internal error - Unable to save single app to file", ex);
+            }
+        }
+
+        public static AppSettings LoadAppSettingsFromFile()
+        {
+            try
+            {
+                if (File.Exists(Constants.AppsFileFullPath))
+                {
+                    var fileContent = File.ReadAllText(Constants.AppsFileFullPath);
+                    var model = JsonConvert.DeserializeObject<AppSettings>(fileContent);
+                    Logger.Log.Info("AppSettings was loaded from file");
+
+                    return model;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log.Error("Internal error - Unable to load appSettings from file", ex);
+            }
+            return new AppSettings();
+        }
+
+        public static void SaveAppSettingsToFile(AppSettings model)
+        {
+            try
+            {
+                var modelAsString = JsonConvert.SerializeObject(model);
+                File.WriteAllText(Constants.AppsFileFullPath, modelAsString);
+            }
+            catch (Exception ex)
+            {
+                Logger.Log.Error("Internal error - Unable to save appSettings to file", ex);
             }
         }
     }

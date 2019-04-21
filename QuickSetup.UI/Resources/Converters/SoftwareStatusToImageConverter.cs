@@ -2,6 +2,7 @@
 using QuickSetup.Logic.Infra.Enums;
 using System;
 using System.Globalization;
+using System.Windows;
 using System.Windows.Data;
 
 namespace QuickSetup.UI.Resources.Converters
@@ -32,7 +33,7 @@ namespace QuickSetup.UI.Resources.Converters
                 //{
                 //    return "pack://application:,,,/Resources/Icons-flaticon/question.png";
                 //}
-                return string.Empty;
+                return DependencyProperty.UnsetValue;
             }
             catch (Exception ex)
             {
