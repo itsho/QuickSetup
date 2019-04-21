@@ -15,6 +15,6 @@ namespace QuickSetup.Logic.Infra
         public const string MVVM_MESSAGE_SHOW_SINGLESOFTWAREVIEW = "SHOW_SINGLESOFTWAREVIEW";
 
         public const string HKLM = "HKEY_LOCAL_MACHINE";
-        public const string HKCU = "HKEY_LOCAL_MACHINE";
+        public const string HKCU = "HKEY_CURRENT_USER";
     }
 }

@@ -44,7 +44,7 @@
     </Window.Resources>
 
     <DockPanel>
-        
+
         <StatusBar DockPanel.Dock="Bottom">
             <StatusBarItem HorizontalContentAlignment="Right">
                 <TextBlock HorizontalAlignment="Right" FontSize="8">
@@ -79,20 +79,6 @@
                         </StackPanel>
                     </Button>
 
-                    <!--<Button Command="Close"
-                               >
-                        <StackPanel Orientation="Horizontal">
-                            <Rectangle Width="20" Height="20">
-                                <Rectangle.Fill>
-                                    <VisualBrush Visual="{StaticResource appbar_close}" />
-                                </Rectangle.Fill>
-                            </Rectangle>
-                            <TextBlock Margin="5,0"
-                                       VerticalAlignment="Center"
-                                       Text="Exit" />
-                        </StackPanel>
-                        
-                    </Button>-->
                 </ToolBar>
 
                 <Grid>
@@ -105,221 +91,39 @@
                     <DockPanel Grid.Column="0">
                         <TextBlock DockPanel.Dock="Top" Text="Folder Tree" FontWeight="Bold" FontSize="14" />
 
-                        <TreeView  x:Name="softwareTree" ItemsSource="{Binding Path=FoldersList}" >
+                        <TreeView ItemsSource="{Binding Path=FoldersList}" SelectedItemChanged="TreeView_OnSelectedItemChanged">
                             <TreeView.Resources>
                                 <!--how to display a "SoftwareDirectoryModel"-->
                                 <HierarchicalDataTemplate  DataType="{x:Type viewModel:SoftwareDirectoryViewModel}"
                                                    ItemsSource="{Binding Path=SubDirs}">
                                     <StackPanel Orientation="Horizontal">
-                                        <Image Source="{Binding Path=Status, Converter={StaticResource MySoftwareStatusToImageConverter}}" Width="24" Height="24"/>
-                                        <TextBlock Text="{Binding Name}"  VerticalAlignment="Center"/>
+                                        <Image Source="{Binding Path=Status, Converter={StaticResource MySoftwareStatusToImageConverter}}" Width="24" Height="24" />
+                                        <TextBlock Text="{Binding Name}"  VerticalAlignment="Center" />
                                     </StackPanel>
                                 </HierarchicalDataTemplate>
-
-                              
-
-                                <!--<Style TargetType="{x:Type TreeViewItem}" BasedOn="{StaticResource {x:Type TreeViewItem}}">
-                                    <Setter Property="ContextMenu"  >
-                                        <Setter.Value>
-                                           
-
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>-->
-
-                                <ContextMenu x:Key="SoftwareRightClickMenu" >
-                                    <MenuItem Header="Install" Command="{Binding Path=InstallSoftwareCommand}" />
-                                    <Separator />
-                                    <MenuItem Header="Edit/Create QS Settings..." Command="{Binding Path=EditQSSettingsCommand}" />
-                                    <MenuItem Header="Browse" Command="{Binding Path=BrowseCommand}" />
-                                </ContextMenu>
                             </TreeView.Resources>
-
-                            <TreeView.ItemContainerStyle>
-                                <Style TargetType="{x:Type TreeViewItem}">
-                                    <Setter Property="Tag" Value="{Binding Path=DataContext, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TreeView}}}"/>
-                                    <Setter Property="ContextMenu" Value="{Binding Source={StaticResource SoftwareRightClickMenu}}"/>
-                                </Style>
-                            </TreeView.ItemContainerStyle>
                         </TreeView>
                     </DockPanel>
 
                     <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
 
-                    <DockPanel Grid.Column="2">
+                    <StackPanel Grid.Column="2">
                         <TextBlock DockPanel.Dock="Top" Text="Selected folder" FontWeight="Bold" FontSize="14" />
-                    </DockPanel>
+                        <TextBlock Text="{Binding Path=SelectedSoftwareFolder.Name, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBlock Text="{Binding Path=SelectedSoftwareFolder.Status, UpdateSourceTrigger=PropertyChanged}" />
+                        <StackPanel Orientation="Horizontal">
+                            <Button Command="{Binding Path=SelectedSoftwareFolder.InstallSoftwareCommand}" MinHeight="50" MinWidth="100">
+                                <TextBlock Text="Install"></TextBlock>
+                            </Button>
+                            <Button Command="{Binding Path=SelectedSoftwareFolder.BrowseToFolderCommand}" MinHeight="50" MinWidth="100">
+                                <TextBlock Text="Browse..."></TextBlock>
+                            </Button>
+                            <Button Command="{Binding Path=SelectedSoftwareFolder.EditQSSettingsCommand}" MinHeight="50" MinWidth="100">
+                                <TextBlock Text="Edit Quick Setup Settings..."></TextBlock>
+                            </Button>
+                        </StackPanel>
+                    </StackPanel>
                 </Grid>
-
-                <!--<TreeView ItemsSource="{Binding Path=SoftwareList}" />-->
-
-                <!--<xcdg:DataGridControl Margin="5"
-                                      Visibility="Collapsed"
-                                      AutoCreateColumns="False"
-                                      AutoScrollCurrentItem="All"
-                                      ItemsSource="{Binding Path=SoftwareList,
-                                                            Mode=OneWay}"
-                                      SelectedItem="{Binding Path=SelectedSoftware,
-                                                             Mode=TwoWay,
-                                                             UpdateSourceTrigger=PropertyChanged}">
-
-                    <xcdg:DataGridControl.View>
-                        <xcdg:TableflowView ContainerHeight="55" ShowRowSelectorPane="False" />
-                    </xcdg:DataGridControl.View>
-
-                    <xcdg:DataGridControl.Columns>
-
-                        <xcdg:Column Title="Install?"
-                                     Width="60"
-                                     MinWidth="50"
-                                     MaxWidth="70"
-                                     FieldName="IsChecked">
-                            <xcdg:Column.CellContentTemplate>
-                                <DataTemplate>
-                                    <CheckBox IsChecked="{xcdg:CellEditorBinding}" />
-                                </DataTemplate>
-                            </xcdg:Column.CellContentTemplate>
-                        </xcdg:Column>
-
-                        <xcdg:Column Title="Software Name"
-                                     Width="180"
-                                     FieldName="SoftwareName"
-                                     IsMainColumn="True"
-                                     ReadOnly="True">
-                            <xcdg:Column.CellContentTemplate>
-                                <DataTemplate>
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock VerticalAlignment="Center"
-                                                   Text="{Binding}"
-                                                   ToolTip="{Binding Path=NotesToolTip,
-                                                                     Mode=OneWay,
-                                                                     UpdateSourceTrigger=PropertyChanged}" />
-                                        <Image Source="{Binding}" />
-                                    </StackPanel>
-                                </DataTemplate>
-                            </xcdg:Column.CellContentTemplate>
-                        </xcdg:Column>
-
-                        -->
-                <!--<xcdg:Column Title="Language"
-                                     Width="70"
-                                     FieldName="OriginalModel.LangCodeIso6392"
-                                     IsMainColumn="False"
-                                     ReadOnly="True" />-->
-
-                <!--<xcdg:Column Title="Setup Folder"
-                                     Width="180"
-                                     FieldName="OriginalModel.SetupFolder"
-                                     IsMainColumn="True"
-                                     ReadOnly="True"
-                                     Visible="{Binding Path=IsDev,
-                                                       Mode=OneWay}" />-->
-                <!--
-
-                        <xcdg:Column Title="Status"
-                                     FieldName="Status"
-                                     IsMainColumn="False"
-                                     ReadOnly="True">
-                            <xcdg:Column.CellContentTemplate>
-                                <DataTemplate>
-                                    <StackPanel Orientation="Horizontal" ToolTip="{Binding}">
-                                        <Image Width="20"
-                                               Height="20"
-                                               Source="{Binding Converter={StaticResource ResourceKey=MySoftwareStatusToImageConverter},
-                                                                Mode=OneWay}" />
-                                        <TextBlock VerticalAlignment="Center"
-                                                   FontSize="10"
-                                                   Text="{Binding Converter={converters:EnumDescriptionConverter}}" />
-                                    </StackPanel>
-                                </DataTemplate>
-                            </xcdg:Column.CellContentTemplate>
-                        </xcdg:Column>
-
-                        <xcdg:UnboundColumn Title="Operations"
-                                            MinWidth="180"
-                                            FieldName="FakeColumnName">
-                            <xcdg:UnboundColumn.CellContentTemplate>
-
-                                <DataTemplate>
-                                    <StackPanel Orientation="Horizontal">
-                                        -->
-                <!--
-                                            Commands are not working with Xceed UnboundColumn. no idea why
-                                            Command="{Binding Path=ParentRow.Row.InstallCommand}"
-                                        -->
-                <!--
-                                        <Button MinWidth="50"
-                                                Margin="3,0,3,0"
-                                                Click="ButtonInstall_OnClick"
-                                                Padding="0"
-                                                ToolTip="Install">
-                                            <Button.Template>
-                                                <ControlTemplate>
-                                                    <Rectangle Width="30"
-                                                               Height="30"
-                                                               Stroke="LightYellow">
-                                                        <Rectangle.Fill>
-                                                            <VisualBrush Visual="{StaticResource appbar_cabinet_in}" />
-                                                        </Rectangle.Fill>
-                                                    </Rectangle>
-                                                </ControlTemplate>
-                                            </Button.Template>
-                                        </Button>
-
-                                        -->
-                <!--
-                                            Commands are not working with Xceed UnboundColumn. no idea why
-                                            Command="{Binding Path=DataGridContext.EditAppCommand}"
-                                        -->
-                <!--
-                                        <StackPanel>
-                                            <Button MinWidth="50"
-                                                    Click="ButtonEdit_OnClick"
-                                                    Padding="0"
-                                                    ToolTip="Edit Setup Settings">
-                                                <Button.Template>
-                                                    <ControlTemplate>
-                                                        <StackPanel Orientation="Horizontal">
-                                                            <Rectangle Width="13" Height="13">
-
-                                                                <Rectangle.Fill>
-                                                                    <VisualBrush Visual="{StaticResource appbar_edit}" />
-                                                                </Rectangle.Fill>
-                                                            </Rectangle>
-                                                            <TextBlock Margin="3,0"
-                                                                       VerticalAlignment="Center"
-                                                                       Text="Edit" />
-                                                        </StackPanel>
-                                                    </ControlTemplate>
-                                                </Button.Template>
-                                            </Button>
-
-                                            <Button MinWidth="50"
-                                                    Click="ButtonRemove_OnClick"
-                                                    Padding="0"
-                                                    ToolTip="Uninstall">
-                                                <Button.Template>
-                                                    <ControlTemplate>
-                                                        <StackPanel Orientation="Horizontal">
-                                                            <Rectangle Width="12" Height="12">
-                                                                <Rectangle.Fill>
-                                                                    <VisualBrush Visual="{StaticResource appbar_app_remove}" />
-                                                                </Rectangle.Fill>
-                                                            </Rectangle>
-                                                            <TextBlock Margin="3,0"
-                                                                       VerticalAlignment="Center"
-                                                                       Text="Uninstall" />
-                                                        </StackPanel>
-                                                    </ControlTemplate>
-                                                </Button.Template>
-                                            </Button>
-                                        </StackPanel>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </xcdg:UnboundColumn.CellContentTemplate>
-                        </xcdg:UnboundColumn>
-                    </xcdg:DataGridControl.Columns>
-                </xcdg:DataGridControl>-->
             </DockPanel>
 
             <GridSplitter Grid.Row="1"

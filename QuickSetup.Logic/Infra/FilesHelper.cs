@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using QuickSetup.Logic.Models;
+using System;
 using System.IO;
 using System.Security.Cryptography;
 
@@ -19,6 +21,34 @@ namespace QuickSetup.Logic.Infra
                 }
             }
             return strComputedHash;
+        }
+
+        public static SingleSoftwareModel LoadSoftwareSettingsFromFile(FileInfo softwareSettingsFile)
+        {
+            try
+            {
+                var fileContent = File.ReadAllText(softwareSettingsFile.FullName);
+                var model = JsonConvert.DeserializeObject<SingleSoftwareModel>(fileContent);
+                return model;
+            }
+            catch (Exception ex)
+            {
+                Logger.Log.Error("Internal error - Unable to load data from softwareSettingsFile ", ex);
+                return null;
+            }
+        }
+
+        public static void SaveSoftwareSettingsToFile(SingleSoftwareModel model, string fileName)
+        {
+            try
+            {
+                var modelAsString = JsonConvert.SerializeObject(model);
+                File.WriteAllText(fileName, modelAsString);
+            }
+            catch (Exception ex)
+            {
+                Logger.Log.Error("Internal error - Unable to save data to settings file", ex);
+            }
         }
     }
 }
