@@ -1,8 +1,6 @@
-﻿using Newtonsoft.Json;
-using QuickSetup.Logic.Infra;
+﻿using QuickSetup.Logic.Infra;
 using System;
 using System.Diagnostics;
-using System.IO;
 
 namespace QuickSetup.Logic.Models
 {
@@ -35,7 +33,8 @@ namespace QuickSetup.Logic.Models
 
         public string ExistenceCheckRegistryKey { get; set; }
 
-        public string ExistenceCheckRegistryValue { get; set; }
+        public string ExistenceCheckRegistryValueName { get; set; }
+        public string ExistenceCheckRegistryValueData { get; set; }
 
         /// <summary>
         /// <para>Can use environment variables</para>
@@ -57,39 +56,26 @@ namespace QuickSetup.Logic.Models
             return 0;
         }
 
-        public void CopyDataFrom(SingleSoftwareModel p_modelSource)
+        public void CopyDataFrom(SingleSoftwareModel modelSource)
         {
             try
             {
-                var lstProp = typeof(SingleSoftwareModel).GetProperties();
-
-                foreach (var propertyInfo in lstProp)
-                {
-                    // get value from 'Source' instance
-                    var valOrig = propertyInfo.GetValue(p_modelSource, null);
-
-                    // set value in 'Target' instance (current)
-                    propertyInfo.SetValue(this, valOrig);
-                }
+                AppName = modelSource.AppName;
+                LangCodeIso6392 = modelSource.LangCodeIso6392;
+                Category = modelSource.LangCodeIso6392;
+                NotesToolTip = modelSource.NotesToolTip;
+                SetupFileName = modelSource.SetupFileName;
+                SetupSilentParams = modelSource.SetupSilentParams;
+                IsMsiSetup = modelSource.IsMsiSetup;
+                ExistenceCheckRegistryKey = modelSource.ExistenceCheckRegistryKey;
+                ExistenceCheckRegistryValueName = modelSource.ExistenceCheckRegistryValueName;
+                ExistenceCheckRegistryValueData = modelSource.ExistenceCheckRegistryValueData;
+                ExistenceCheckFilePath = modelSource.ExistenceCheckFilePath;
+                ExistenceCheckFileMd5Hash = modelSource.ExistenceCheckFileMd5Hash;
             }
             catch (Exception ex)
             {
                 Logger.Log.Error("Internal error - Unable to Copy data from SingleSoftwareModel: ", ex);
-            }
-        }
-
-        public static SingleSoftwareModel LoadFromFile(FileInfo softwareSettingsFile)
-        {
-            try
-            {
-                var fileContent = File.ReadAllText(softwareSettingsFile.FullName);
-                var model = JsonConvert.DeserializeObject<SingleSoftwareModel>(fileContent);
-                return model;
-            }
-            catch (Exception ex)
-            {
-                Logger.Log.Error("Internal error - Unable to load data from softwareSettingsFile ", ex);
-                return null;
             }
         }
     }

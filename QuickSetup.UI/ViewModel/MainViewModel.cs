@@ -4,7 +4,6 @@ using log4net.Config;
 using QuickSetup.Logic.Infra;
 using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
 
@@ -13,28 +12,16 @@ using System.Windows.Threading;
 
 namespace QuickSetup.UI.ViewModel
 {
-    /// <summary>
-    /// This class contains properties that the main View can data bind to.
-    /// <para>
-    /// Use the <strong>mvvminpc</strong> snippet to add bindable properties to this ViewModel.
-    /// </para>
-    /// <para>
-    /// You can also use Blend to data bind with the tool's support.
-    /// </para>
-    /// <para>
-    /// See http://www.galasoft.ch/mvvm
-    /// </para>
-    /// </summary>
     public class MainViewModel : ViewModelBase
     {
-        private const string APPLICATION_QS_FILE = "QSSetting.json";
-
         #region data members
 
         private string _workingFolder = null;
         private StringBuilder _logbuilderToScreen = null;
         private string _strLogOutput;
         private readonly DispatcherTimer _tmrLogRefresh = new DispatcherTimer();
+        private SoftwareDirectoryViewModel _selectedSoftwareFolder;
+        private bool _showAllFolders;
 
         #endregion data members
 
@@ -87,7 +74,6 @@ namespace QuickSetup.UI.ViewModel
             {
                 InitLog4NetOutputToWindow();
 
-
 #if DEBUG
                 IsDev = true;
 #endif
@@ -100,7 +86,18 @@ namespace QuickSetup.UI.ViewModel
 
         public ObservableCollection<SoftwareDirectoryViewModel> FoldersList { get; private set; }
 
-        private bool _showAllFolders;
+        public SoftwareDirectoryViewModel SelectedSoftwareFolder
+        {
+            get { return _selectedSoftwareFolder; }
+            set
+            {
+                if (_selectedSoftwareFolder != value)
+                {
+                    _selectedSoftwareFolder = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
 
         public bool ShowAllFolders
         {
@@ -184,12 +181,12 @@ namespace QuickSetup.UI.ViewModel
             GetLog4NetOutputChunk();
         }
 
-        private void AppeandToWindowLog(string p_strLog)
+        private void AppeandToWindowLog(string log)
         {
-            if (!string.IsNullOrWhiteSpace(p_strLog))
+            if (!string.IsNullOrWhiteSpace(log))
             {
-                LogOutputToWindow += p_strLog;
-                if (!p_strLog.EndsWith(Environment.NewLine, StringComparison.Ordinal))
+                LogOutputToWindow += log;
+                if (!log.EndsWith(Environment.NewLine, StringComparison.Ordinal))
                 {
                     LogOutputToWindow += Environment.NewLine;
                 }
@@ -222,8 +219,7 @@ namespace QuickSetup.UI.ViewModel
         {
             try
             {
-                // scan current folder for QSSetting.json
-                var folders = ScanCurrentFolder(!ShowAllFolders);
+                FoldersList.Clear();
 
                 // get folders in root folder
                 var rootSubFolders = Directory.GetDirectories(WorkingFolder, "*.", SearchOption.TopDirectoryOnly);
@@ -239,22 +235,6 @@ namespace QuickSetup.UI.ViewModel
             catch (Exception ex)
             {
                 Logger.Log.Error(ex);
-            }
-        }
-
-        private string[] ScanCurrentFolder(bool onlyFoldersWithQsFile)
-        {
-            try
-            {
-                // if needed, filter by QS file. otherwise, show only folders (no files)
-                var fileToSearch = onlyFoldersWithQsFile ? APPLICATION_QS_FILE : "*.";
-
-                return Directory.GetFileSystemEntries(WorkingFolder, fileToSearch, SearchOption.AllDirectories);
-            }
-            catch (Exception ex)
-            {
-                Logger.Log.Error(ex);
-                return null;
             }
         }
 

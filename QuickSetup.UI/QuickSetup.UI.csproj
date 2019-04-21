@@ -97,10 +97,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Infra\ICloseable.cs" />
     <Compile Include="Resources\Converters\EnumDescriptionConverter.cs" />
     <Compile Include="Resources\Converters\SoftwareStatusToImageConverter.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
-    <Compile Include="ViewModel\SingleSoftwareViewModel.cs" />
     <Compile Include="ViewModel\SoftwareDirectoryViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="Views\SingleSoftwareView.xaml.cs">

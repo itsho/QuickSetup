@@ -1,17 +1,17 @@
 ﻿<controls:MetroWindow x:Class="QuickSetup.UI.Views.SingleSoftwareView"
                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                      x:Name="SoftwareViewWindow"
                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                       xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                       xmlns:viewModel="clr-namespace:QuickSetup.UI.ViewModel"
                       Title="Single Software - Edit"
-                      Width="450"
                       MinWidth="400"
-                      d:DataContext="{d:DesignInstance Type=viewModel:SingleSoftwareViewModel}"
+                      d:DataContext="{d:DesignInstance Type=viewModel:SoftwareDirectoryViewModel}"
                       BorderThickness="5"
                       ResizeMode="CanResizeWithGrip"
-                      SizeToContent="Height"
+                      SizeToContent="WidthAndHeight"
                       mc:Ignorable="d">
     <controls:MetroWindow.Resources>
         <Style TargetType="TextBlock">
@@ -46,7 +46,7 @@
             <TextBox Grid.Row="0"
                      Grid.Column="1"
                      FontWeight="Bold"
-                     Text="{Binding Path=ClonedModel.SoftwareName,
+                     Text="{Binding Path=ClonedModel.AppName,
                                     UpdateSourceTrigger=PropertyChanged,
                                     Mode=TwoWay}" />
 
@@ -74,6 +74,7 @@
 
             <TextBlock Grid.Row="2"
                        Grid.Column="0"
+                       Visibility="Collapsed"
                        VerticalAlignment="Center">
                 <Rectangle Width="20" Height="15">
                     <Rectangle.Fill>
@@ -85,6 +86,7 @@
             <ComboBox Grid.Row="2"
                       Grid.Column="1"
                       IsEditable="True"
+                      Visibility="Collapsed"
                       ItemsSource="{Binding Path=PossibleCategories,
                                             Mode=OneTime}"
                       Text="{Binding Path=ClonedModel.Category,
@@ -166,11 +168,10 @@
                             </Rectangle>
                             <Run Text="Setup Folder" />
                         </TextBlock>
-                        <TextBox Grid.Row="0"
+                        <TextBlock Grid.Row="0"
                                  Grid.Column="1"
-                                 Text="{Binding Path=ClonedModel.SetupFolder,
-                                                UpdateSourceTrigger=PropertyChanged,
-                                                Mode=TwoWay}" />
+                                 Text="{Binding Path=CurrentFolder,
+                                                UpdateSourceTrigger=PropertyChanged}" />
 
                         <TextBlock Grid.Row="1" Grid.Column="0">
                             <Rectangle Width="20" Height="20">
@@ -216,10 +217,56 @@
                      Header="Detect if already installed"
                      ToolTip="Registry Key&amp;Value to check if software is installed">
                 <StackPanel>
+                    <GroupBox Header="By File">
+
+                        <StackPanel>
+                            <TextBlock Background="LightYellow"
+                                       Foreground="Gray"
+                               FontSize="10"
+                               Text="Specify file path to check if this software is installed" />
+                            <Separator />
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Grid.Row="0" Grid.Column="0">
+                                    <Run Text="Existence File Path" />
+                                    <LineBreak />
+                                    <Run FontSize="7" Text="Use Environment when possible: " />
+                                    <LineBreak />
+                                    <Run FontSize="7" Text="%AppData%, %ProgramFiles%, etc.." />
+                                </TextBlock>
+                                <DockPanel Grid.Row="0" Grid.Column="1">
+                                    <Button DockPanel.Dock="Right" Command="{Binding Path=BrowseToExistenceCheckFileCommand}">
+                                        <TextBlock Text="Browse..."></TextBlock>
+                                    </Button>
+
+                                    <TextBox Text="{Binding Path=ClonedModel.ExistenceCheckFilePath, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                             VerticalAlignment="Center" />
+                                </DockPanel>
+
+                                <TextBlock Grid.Row="1"
+                                   Grid.Column="0"
+                                   Text="File MD5 Hash" />
+                                <DockPanel Grid.Row="1" Grid.Column="1">
+                                    <TextBox Text="{Binding Path=ClonedModel.ExistenceCheckFileMd5Hash, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                                </DockPanel>
+                            </Grid>
+                        </StackPanel>
+                    </GroupBox>
                     <GroupBox Header="By Registry">
                         <StackPanel>
                             <TextBlock Background="LightYellow"
                                        FontSize="10"
+                                       Foreground="Gray"
                                        Text="Specify Registry path to check if this software is installed" />
                             <Separator />
                             <Grid>
@@ -229,13 +276,13 @@
                                 </Grid.ColumnDefinitions>
                                 <Grid.RowDefinitions>
                                     <RowDefinition />
-
+                                    <RowDefinition />
                                     <RowDefinition />
                                 </Grid.RowDefinitions>
 
                                 <TextBlock Grid.Row="0"
                                            Grid.Column="0"
-                                           Text="Existence Registry Key" />
+                                           Text="Key" />
                                 <DockPanel Grid.Row="0" Grid.Column="1">
                                     <Button Command="{Binding Path=OpenRegistryKeyCommand}" DockPanel.Dock="Right">
                                         <TextBlock Text="Browse..." />
@@ -244,69 +291,29 @@
                                 </DockPanel>
                                 <TextBlock Grid.Row="1"
                                            Grid.Column="0"
-                                           Text="Existence Registry Value" />
+                                           Text="Value Name" />
                                 <TextBox Grid.Row="1"
                                          Grid.Column="1"
-                                         Text="{Binding Path=ClonedModel.ExistenceCheckRegistryValue,
+                                         Text="{Binding Path=ClonedModel.ExistenceCheckRegistryValueName,
+                                                UpdateSourceTrigger=PropertyChanged,
+                                                Mode=TwoWay}" />
+
+                                <TextBlock Grid.Row="2"
+                                           Grid.Column="0">
+
+                                    <Run Text="Value Data" /><LineBreak />
+                                    <Run Text="(String or Int32)"  FontSize="8" />
+                                </TextBlock>
+                                <TextBox Grid.Row="2"
+                                         Grid.Column="1"
+                                         Text="{Binding Path=ClonedModel.ExistenceCheckRegistryValueData,
                                                 UpdateSourceTrigger=PropertyChanged,
                                                 Mode=TwoWay}" />
                             </Grid>
                         </StackPanel>
-
-                    </GroupBox>
-
-                    <GroupBox Header="By File">
-
-                <StackPanel>
-                    <TextBlock Background="LightYellow"
-                               FontSize="10"
-                               Text="Specify file path to check if this software is installed" />
-                    <Separator />
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition />
-                            <RowDefinition />
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
-
-                        <TextBlock Grid.Row="0" Grid.Column="0">
-                            <Run Text="Existence File Path" />
-                            <LineBreak />
-                            <Run FontSize="7" Text="Use Environment when possible: " />
-                            <LineBreak />
-                            <Run FontSize="7" Text="%AppData%, %ProgramFiles%, etc.." />
-                        </TextBlock>
-                        <DockPanel Grid.Row="0" Grid.Column="1">
-                            <Button Command="{Binding Path=TranslatePathToEnvVarCommand}"
-                                    DockPanel.Dock="Right"
-                                    ToolTip="Will try to translate path to Environment variable as possible">
-                                <TextBlock Text="Translate to EnvVar..." />
-                            </Button>
-                            <TextBox Text="{Binding Path=ClonedModel.ExistenceCheckFilePath, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
-                        </DockPanel>
-
-                        <TextBlock Grid.Row="1"
-                                   Grid.Column="0"
-                                   Text="File MD5 Hash" />
-                        <DockPanel Grid.Row="1" Grid.Column="1">
-                            <Button Command="{Binding Path=CalculateMD5OfExistenceFilePathCommand}"
-                                    DockPanel.Dock="Right"
-                                    ToolTip="Calculate MD5 of selected file">
-                                <TextBlock Text="Calculate MD5..." />
-                            </Button>
-                            <TextBox Text="{Binding Path=ClonedModel.ExistenceCheckFileMd5Hash, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
-                        </DockPanel>
-                    </Grid>
-                </StackPanel>
                     </GroupBox>
                 </StackPanel>
             </TabItem>
-           
         </TabControl>
 
         <Separator />
@@ -315,6 +322,7 @@
         <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
             <Button Margin="5"
                     Command="{Binding Path=SaveChangesAndCloseCommand}"
+                    CommandParameter="{Binding ElementName=SoftwareViewWindow}"
                     IsDefault="True"
                     ToolTip="Save changes and close window">
                 <Button.Template>
@@ -330,6 +338,7 @@
 
             <Button Margin="5"
                     Command="{Binding Path=DiscardAndCloseCommand}"
+                    CommandParameter="{Binding ElementName=SoftwareViewWindow}"
                     IsCancel="True"
                     ToolTip="Discard changes and close window">
                 <Button.Template>
