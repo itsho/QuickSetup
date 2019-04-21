@@ -34,12 +34,8 @@ namespace QuickSetup.UI.Views
                 if (DataContext is MainViewModel mvm)
                 {
                     // TODO: reload the folder tree or at least the selected item.
-                    Debugger.Break();
-
-                    //if (mvm.SaveAllApps.CanExecute(null))
-                    //{
-                    //    mvm.SaveAllApps.Execute(null);
-                    //}
+                     
+                    //Debugger.Break();
                 }
             }
 

@@ -12,6 +12,7 @@
                       BorderThickness="5"
                       ResizeMode="CanResizeWithGrip"
                       SizeToContent="WidthAndHeight"
+                      WindowStartupLocation="CenterOwner"
                       mc:Ignorable="d">
     <controls:MetroWindow.Resources>
         <Style TargetType="TextBlock">
@@ -52,6 +53,7 @@
 
             <TextBlock Grid.Row="1"
                        Grid.Column="0"
+                       Visibility="Collapsed"
                        VerticalAlignment="Center">
                 <Rectangle Width="20" Height="20">
                     <Rectangle.Fill>
@@ -63,6 +65,7 @@
             <ComboBox Grid.Row="1"
                       Grid.Column="1"
                       DisplayMemberPath="Value"
+                      Visibility="Collapsed"
                       ItemsSource="{Binding Path=ListOfIso6392,
                                             Mode=OneWay}"
                       SelectedValue="{Binding Path=ClonedModel.LangCodeIso6392,

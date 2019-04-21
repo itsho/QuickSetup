@@ -1,0 +1,28 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:converters="clr-namespace:QuickSetup.UI.Resources.Converters">
+
+    <converters:SoftwareStatusToImageConverter x:Key="MySoftwareStatusToImageConverter" />
+
+    <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+        <Setter Property="Margin" Value="3"></Setter>
+    </Style>
+
+    <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+        <Setter Property="Margin" Value="3"></Setter>
+    </Style>
+    
+    <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
+        <Setter Property="Margin" Value="3"></Setter>
+    </Style>
+
+    <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
+        <Setter Property="Margin" Value="3"></Setter>
+    </Style>
+    <!--
+                list of MahApps icons
+                http://www.barth-dev.de/misc/stack/mahapps-icons-list/
+            -->
+
+    <!--<VisualBrush x:Key="SaveIcon" Visual="{StaticResource appbar_save}" />-->
+</ResourceDictionary>
