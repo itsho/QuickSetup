@@ -14,11 +14,13 @@
                       SizeToContent="WidthAndHeight"
                       WindowStartupLocation="CenterOwner"
                       mc:Ignorable="d">
-    <controls:MetroWindow.Resources>
-        <Style TargetType="TextBlock">
-            <Setter Property="VerticalAlignment" Value="Center" />
-        </Style>
-    </controls:MetroWindow.Resources>
+   
+        <Window.Resources>
+            <ResourceDictionary Source="../Resources/AppStyle/AppStyle.xaml"/>
+        </Window.Resources>
+
+        
+    
 
     <StackPanel Margin="10">
         <Grid>
@@ -146,8 +148,7 @@
 
             <TabItem Header="How To Install">
                 <StackPanel>
-                    <TextBlock Background="LightYellow"
-                               FontSize="10"
+                    <TextBlock Style="{StaticResource ResourceKey=TextBlockNotesStyle}"
                                Text="Specify setup location and parameters" />
                     <Separator />
 
@@ -163,27 +164,25 @@
                         </Grid.RowDefinitions>
                         <TextBlock Grid.Row="0"
                                    Grid.Column="0"
-                                   VerticalAlignment="Center">
-                            <Rectangle Width="20" Height="20">
-                                <Rectangle.Fill>
-                                    <VisualBrush Visual="{StaticResource appbar_folder}" />
-                                </Rectangle.Fill>
-                            </Rectangle>
-                            <Run Text="Setup Folder" />
-                        </TextBlock>
+                                   VerticalAlignment="Center"><InlineUIContainer>
+                                <Rectangle Width="20" Height="20">
+                                    <Rectangle.Fill>
+                                        <VisualBrush Visual="{StaticResource appbar_folder}" />
+                                    </Rectangle.Fill>
+                                </Rectangle>
+                            </InlineUIContainer><Run Text=" Folder"/></TextBlock>
                         <TextBlock Grid.Row="0"
                                  Grid.Column="1"
                                  Text="{Binding Path=CurrentFolder,
                                                 UpdateSourceTrigger=PropertyChanged}" />
 
-                        <TextBlock Grid.Row="1" Grid.Column="0">
-                            <Rectangle Width="20" Height="20">
-                                <Rectangle.Fill>
-                                    <VisualBrush Visual="{StaticResource appbar_page}" />
-                                </Rectangle.Fill>
-                            </Rectangle>
-                            <Run Text="Setup File Name" />
-                        </TextBlock>
+                        <TextBlock Grid.Row="1" Grid.Column="0"><InlineUIContainer>
+                                <Rectangle Width="20" Height="20">
+                                    <Rectangle.Fill>
+                                        <VisualBrush Visual="{StaticResource appbar_page}" />
+                                    </Rectangle.Fill>
+                                </Rectangle>
+                            </InlineUIContainer><Run Text=" File Name"/></TextBlock>
                         <DockPanel Grid.Row="1" Grid.Column="1">
                             <Button MinWidth="50"
                                     Command="{Binding Path=BrowseToSelectSetupFileCommand}"
@@ -193,14 +192,13 @@
                             <TextBox Text="{Binding Path=ClonedModel.SetupFileName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                         </DockPanel>
 
-                        <TextBlock Grid.Row="2" Grid.Column="0">
-                            <Rectangle Width="20" Height="20">
-                                <Rectangle.Fill>
-                                    <VisualBrush Visual="{StaticResource appbar_sound_mute}" />
-                                </Rectangle.Fill>
-                            </Rectangle>
-                            <Run Text="Setup Silent Params" />
-                        </TextBlock>
+                        <TextBlock Grid.Row="2" Grid.Column="0"><InlineUIContainer>
+                                <Rectangle Width="20" Height="20">
+                                    <Rectangle.Fill>
+                                        <VisualBrush Visual="{StaticResource appbar_sound_mute}" />
+                                    </Rectangle.Fill>
+                                </Rectangle>
+                            </InlineUIContainer><Run Text=" Parameters"/></TextBlock>
                         <TextBox Grid.Row="2"
                                  Grid.Column="1"
                                  Text="{Binding Path=ClonedModel.SetupSilentParams,
@@ -223,9 +221,7 @@
                     <GroupBox Header="By File">
 
                         <StackPanel>
-                            <TextBlock Background="LightYellow"
-                                       Foreground="Gray"
-                               FontSize="10"
+                            <TextBlock Style="{StaticResource ResourceKey=TextBlockNotesStyle}"
                                Text="Specify file path to check if this software is installed" />
                             <Separator />
 
@@ -267,9 +263,7 @@
                     </GroupBox>
                     <GroupBox Header="By Registry">
                         <StackPanel>
-                            <TextBlock Background="LightYellow"
-                                       FontSize="10"
-                                       Foreground="Gray"
+                            <TextBlock Style="{StaticResource ResourceKey=TextBlockNotesStyle}"
                                        Text="Specify Registry path to check if this software is installed" />
                             <Separator />
                             <Grid>

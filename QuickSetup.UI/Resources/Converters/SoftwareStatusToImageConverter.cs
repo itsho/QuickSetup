@@ -29,6 +29,13 @@ namespace QuickSetup.UI.Resources.Converters
                     return "pack://application:,,,/Resources/Icons-flaticon/error.png";
                 }
 
+                if (origValue == SoftwareInstallStatusEnum.DifferentVersionDetected)
+                {
+                    return "pack://application:,,,/Resources/Icons-flaticon/icons8-opposite-opinion-24.png";
+                }
+                
+
+
                 //if (origValue == SoftwareInstallStatusEnum.Unknown)
                 //{
                 //    return "pack://application:,,,/Resources/Icons-flaticon/question.png";

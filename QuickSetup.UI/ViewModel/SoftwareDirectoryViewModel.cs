@@ -148,7 +148,7 @@ namespace QuickSetup.UI.ViewModel
 
         #region public methods
 
-        public void Init()
+        public bool Init(bool showAllFolders)
         {
             // if QuickSetup settings file(s) exist - get the details:
             var qsFiles = _directoryInfo.GetFiles($"*.{Constants.QUICK_SETUP_SETTINGS_FILE_EXTENSION}");
@@ -174,11 +174,20 @@ namespace QuickSetup.UI.ViewModel
             foreach (var subDir in subDirs)
             {
                 var sub = new SoftwareDirectoryViewModel(subDir);
-                sub.Init();
-                SubDirs.Add(sub);
+                if (sub.Init(showAllFolders))
+                {
+                    SubDirs.Add(sub);
+                }
+            }
+
+            // TODO: This is not 100% correct. need to refine the cases where we need to filter out a folder
+            if (!showAllFolders && subDirs.Count == 0 && qsFiles.Length == 0)
+            {
+                return false;
             }
 
             Logger.Log.Debug($@"Finished initializing folder {_directoryInfo.FullName}. Found QS file: {qsFiles.Length > 0}, Processed {subDirs.Count()} subFolders");
+            return true;
         }
 
         public void RefreshSoftwareInstallStatusEnum()
@@ -204,12 +213,17 @@ namespace QuickSetup.UI.ViewModel
                         if (!string.IsNullOrWhiteSpace(OriginalModel.ExistenceCheckFileMd5Hash))
                         {
                             string strComputedHash = FilesHelper.CalculateMd5(path);
-
                             if (strComputedHash == OriginalModel.ExistenceCheckFileMd5Hash)
                             {
                                 Status = SoftwareInstallStatusEnum.Installed;
                             }
+                            // file exists, but MD5 is different
+                            else
+                            {
+                                Status = SoftwareInstallStatusEnum.DifferentVersionDetected;
+                            }
                         }
+                        // When no hash to check, file existence alone is enough
                         else
                         {
                             Status = SoftwareInstallStatusEnum.Installed;
@@ -262,9 +276,10 @@ namespace QuickSetup.UI.ViewModel
                                 {
                                     Status = SoftwareInstallStatusEnum.Installed;
                                 }
+                                // When value data exists with different value then expected, it's probably a different-version-installed situation.
                                 else
                                 {
-                                    Status = SoftwareInstallStatusEnum.NotInstalled;
+                                    Status = SoftwareInstallStatusEnum.DifferentVersionDetected;
                                 }
                             }
                         }

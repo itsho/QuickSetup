@@ -186,7 +186,10 @@
   <ItemGroup>
     <Resource Include="Resources\Entypo-license.txt" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Resources\Icons-flaticon\icons8-opposite-opinion-24.png" />
+    <Resource Include="Resources\Icons-flaticon\icons8-opposite-opinion-48.png" />
+  </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Icons-flaticon\circumference1.png" />
     <Resource Include="Resources\Icons-flaticon\circumference2.png" />

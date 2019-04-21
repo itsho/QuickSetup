@@ -18,5 +18,8 @@ namespace QuickSetup.Logic.Infra.Enums
 
         [Description("Unable To Get Status")]
         UnableToGetStatus = 4,
+
+        [Description("Different Version Is Installed")]
+        DifferentVersionDetected = 5
     }
 }

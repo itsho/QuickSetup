@@ -19,8 +19,7 @@
         <CommandBinding Command="ApplicationCommands.Close" Executed="CommandBinding_OnExecuted" />
     </Window.CommandBindings>
     <Window.Resources>
-        <ResourceDictionary Source="../Resources/AppStyle/AppStyle.xaml">
-        </ResourceDictionary>
+        <ResourceDictionary Source="../Resources/AppStyle/AppStyle.xaml"/>
     </Window.Resources>
 
     <DockPanel>
@@ -141,31 +140,33 @@
                             </Grid>
 
                             <WrapPanel Orientation="Vertical">
-                                <Button Command="{Binding Path=SelectedSoftwareFolder.InstallSoftwareCommand}" MinHeight="50" MinWidth="100">
-                                    <StackPanel Orientation="Horizontal">
-                                        <Rectangle Width="20" Height="20" Margin="5">
-                                            <Rectangle.Fill>
-                                                <VisualBrush Visual="{StaticResource appbar_download}" />
-                                            </Rectangle.Fill>
-                                        </Rectangle>
-                                        <TextBlock Text="Install" VerticalAlignment="Center" FontSize="16"></TextBlock>
-                                    </StackPanel>
-                                </Button>
-                                <Button Command="{Binding Path=SelectedSoftwareFolder.BrowseToFolderCommand}" MinHeight="50" MinWidth="100">
-                                    <StackPanel Orientation="Horizontal">
-                                        <Rectangle Width="20" Height="20" Margin="5">
-                                            <Rectangle.Fill>
-                                                <VisualBrush Visual="{StaticResource appbar_folder_open}" />
-                                            </Rectangle.Fill>
-                                        </Rectangle>
-                                        <TextBlock Text="Browse..." VerticalAlignment="Center" ></TextBlock>
-                                    </StackPanel>
-                                </Button>
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Command="{Binding Path=SelectedSoftwareFolder.InstallSoftwareCommand}" MinHeight="50" MinWidth="100">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Rectangle Width="20" Height="20" Margin="5">
+                                                <Rectangle.Fill>
+                                                    <VisualBrush Visual="{StaticResource appbar_download}" />
+                                                </Rectangle.Fill>
+                                            </Rectangle>
+                                            <TextBlock Text="Install" VerticalAlignment="Center" FontSize="16"></TextBlock>
+                                        </StackPanel>
+                                    </Button>
+                                    <Button Command="{Binding Path=SelectedSoftwareFolder.BrowseToFolderCommand}" MinHeight="50" MinWidth="100">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Rectangle Width="20" Height="20" Margin="5">
+                                                <Rectangle.Fill>
+                                                    <VisualBrush Visual="{StaticResource appbar_folder_open}" />
+                                                </Rectangle.Fill>
+                                            </Rectangle>
+                                            <TextBlock Text="Browse..." VerticalAlignment="Center" ></TextBlock>
+                                        </StackPanel>
+                                    </Button>
+                                </StackPanel>
                                 <Button Command="{Binding Path=SelectedSoftwareFolder.EditQSSettingsCommand}" MinHeight="50" MinWidth="100">
                                     <StackPanel Orientation="Horizontal">
                                         <Rectangle Width="20" Height="20" Margin="5">
                                             <Rectangle.Fill>
-                                                <VisualBrush Visual="{StaticResource appbar_folder_open}" />
+                                                <VisualBrush Visual="{StaticResource appbar_edit}" />
                                             </Rectangle.Fill>
                                         </Rectangle>
                                         <TextBlock Text="Quick Setup Settings..." VerticalAlignment="Center" />
@@ -185,8 +186,9 @@
 
             <Expander Grid.Row="2"
                       Margin="5"
+                      
                       ExpandDirection="Up">
-                <DockPanel>
+                <DockPanel MaxHeight="500" >
                     <TextBlock DockPanel.Dock="Top" Text="Log:" />
                     <TextBox AcceptsReturn="True"
                              IsReadOnly="True"
