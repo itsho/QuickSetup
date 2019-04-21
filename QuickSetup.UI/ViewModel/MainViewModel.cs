@@ -1,12 +1,13 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using log4net.Config;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using QuickSetup.Logic.Infra;
+using QuickSetup.Logic.Models;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Text;
-
 using System.Windows.Input;
 using System.Windows.Threading;
 
@@ -16,12 +17,11 @@ namespace QuickSetup.UI.ViewModel
     {
         #region data members
 
-        private string _workingFolder = null;
         private StringBuilder _logbuilderToScreen = null;
         private string _strLogOutput;
         private readonly DispatcherTimer _tmrLogRefresh = new DispatcherTimer();
         private SoftwareDirectoryViewModel _selectedSoftwareFolder;
-        private bool _showAllFolders;
+        private AppSettings _qsSettings;
 
         #endregion data members
 
@@ -33,11 +33,11 @@ namespace QuickSetup.UI.ViewModel
         public MainViewModel()
         {
             FoldersList = new ObservableCollection<SoftwareDirectoryViewModel>();
-
             ScanFolderCommand = new RelayCommand(OnScanFolderCommand);
+            BrowseWorkingFolderCommand = new RelayCommand(OnBrowseWorkingFolderCommand);
+            ClearRecentWorkingFolderCommand = new RelayCommand(OnClearRecentWorkingFolderCommand);
 
-            //var currFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            WorkingFolder = @"D:\Standard";
+            QSSettings = new AppSettings();
             ShowAllFolders = true;
 
             // Code runs in Blend --> create design time data.
@@ -45,9 +45,9 @@ namespace QuickSetup.UI.ViewModel
             {
                 #region design mode
 
-                var sub = new SoftwareDirectoryViewModel(WorkingFolder);
-                sub.Init();
-                FoldersList.Add(sub);
+                //var sub = new SoftwareDirectoryViewModel(QSSettings.WorkingFolder);
+                //sub.Init();
+                //FoldersList.Add(sub);
 
                 //var lstRandomName = Constants.LOREM_IPSUM.Split(' ');
                 //var randGen = new Random();
@@ -73,10 +73,8 @@ namespace QuickSetup.UI.ViewModel
             else
             {
                 InitLog4NetOutputToWindow();
-
-#if DEBUG
-                IsDev = true;
-#endif
+                LoadAppSettings();
+                ScanFolderCommand.Execute(null);
             }
         }
 
@@ -99,14 +97,30 @@ namespace QuickSetup.UI.ViewModel
             }
         }
 
+        public AppSettings QSSettings
+        {
+            get { return _qsSettings; }
+            private set
+            {
+                if (_qsSettings != value)
+                {
+                    _qsSettings = value;
+                    RaisePropertyChanged();
+                    RaisePropertyChanged(nameof(ShowAllFolders));
+                    RaisePropertyChanged(nameof(WorkingFolder));
+                    RaisePropertyChanged(nameof(QSSettings.RecentWorkingFolders));
+                }
+            }
+        }
+
         public bool ShowAllFolders
         {
-            get { return _showAllFolders; }
+            get { return QSSettings.IsShowAllFolders; }
             set
             {
-                if (_showAllFolders != value)
+                if (QSSettings.IsShowAllFolders != value)
                 {
-                    _showAllFolders = value;
+                    QSSettings.IsShowAllFolders = value;
                     RaisePropertyChanged();
                 }
             }
@@ -114,26 +128,33 @@ namespace QuickSetup.UI.ViewModel
 
         public string WorkingFolder
         {
-            get { return _workingFolder; }
+            get { return QSSettings.WorkingFolder; }
             set
             {
-                if (_workingFolder != value)
+                if (QSSettings.WorkingFolder != value)
                 {
-                    _workingFolder = value;
+                    QSSettings.WorkingFolder = value;
                     RaisePropertyChanged();
+
+                    if (!string.IsNullOrEmpty(QSSettings.WorkingFolder))
+                    {
+                        SaveAppSettings();
+                    }
                 }
             }
         }
 
         public ICommand ScanFolderCommand { get; private set; }
 
+        public ICommand BrowseWorkingFolderCommand { get; private set; }
+
+        public ICommand ClearRecentWorkingFolderCommand { get; private set; }
+
         public string LogOutputToWindow
         {
             get { return _strLogOutput; }
             set { Set(ref _strLogOutput, value, nameof(LogOutputToWindow)); }
         }
-
-        public bool IsDev { get; set; }
 
         #endregion Properties
 
@@ -221,6 +242,18 @@ namespace QuickSetup.UI.ViewModel
             {
                 FoldersList.Clear();
 
+                if (string.IsNullOrEmpty(WorkingFolder))
+                {
+                    Logger.Log.Warn("Working folder was not selected - nothing to scan");
+                    return;
+                }
+
+                if (!Directory.Exists(WorkingFolder))
+                {
+                    Logger.Log.Warn("Selected Working folder is invalid - unable to scan");
+                    return;
+                }
+
                 // get folders in root folder
                 var rootSubFolders = Directory.GetDirectories(WorkingFolder, "*.", SearchOption.TopDirectoryOnly);
 
@@ -231,6 +264,75 @@ namespace QuickSetup.UI.ViewModel
                     sub.Init();
                     FoldersList.Add(sub);
                 }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log.Error(ex);
+            }
+        }
+
+        private void OnClearRecentWorkingFolderCommand()
+        {
+            try
+            {
+                QSSettings.RecentWorkingFolders.Clear();
+                SaveAppSettings();
+            }
+            catch (Exception ex)
+            {
+                Logger.Log.Error(ex);
+            }
+        }
+
+        private void OnBrowseWorkingFolderCommand()
+        {
+            try
+            {
+                var dialog = new CommonOpenFileDialog
+                {
+                    IsFolderPicker = true,
+                    InitialDirectory = WorkingFolder
+                };
+                var res = dialog.ShowDialog();
+                if (res == CommonFileDialogResult.Ok)
+                {
+                    if (!_qsSettings.RecentWorkingFolders.Contains(dialog.FileName))
+                    {
+                        _qsSettings.RecentWorkingFolders.Add(dialog.FileName);
+                    }
+
+                    WorkingFolder = dialog.FileName;
+                    RaisePropertyChanged(nameof(WorkingFolder));
+
+                    ScanFolderCommand.Execute(null);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log.Error(ex);
+            }
+        }
+
+        private void SaveAppSettings()
+        {
+            try
+            {
+                FilesHelper.SaveAppSettingsToFile(QSSettings);
+            }
+            catch (Exception ex)
+            {
+                Logger.Log.Error(ex);
+            }
+        }
+
+        private void LoadAppSettings()
+        {
+            try
+            {
+                QSSettings = FilesHelper.LoadAppSettingsFromFile();
+                RaisePropertyChanged(nameof(ShowAllFolders));
+                RaisePropertyChanged(nameof(WorkingFolder));
+                RaisePropertyChanged(nameof(QSSettings.RecentWorkingFolders));
             }
             catch (Exception ex)
             {

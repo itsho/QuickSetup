@@ -2,17 +2,12 @@
                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                       xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
-                      xmlns:converters="clr-namespace:QuickSetup.UI.Resources.Converters"
                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                      xmlns:enums="clr-namespace:QuickSetup.Logic.Infra.Enums;assembly=QuickSetup.Logic"
                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                      xmlns:sys="clr-namespace:System;assembly=mscorlib"
                       xmlns:viewModel="clr-namespace:QuickSetup.UI.ViewModel"
-                      xmlns:xcdg="http://schemas.xceed.com/wpf/xaml/datagrid"
-                      xmlns:models="clr-namespace:QuickSetup.Logic.Models;assembly=QuickSetup.Logic"
                       Title="Quick Setup"
-                      Width="900"
-                      Height="350"
+                      Height="600"
+                      Width="800"
                       d:DataContext="{d:DesignInstance Type=viewModel:MainViewModel,
                                                        IsDesignTimeCreatable=True}"
                       BorderThickness="5"
@@ -24,22 +19,7 @@
         <CommandBinding Command="ApplicationCommands.Close" Executed="CommandBinding_OnExecuted" />
     </Window.CommandBindings>
     <Window.Resources>
-        <ResourceDictionary>
-            <!--
-                list of MahApps icons
-                http://www.barth-dev.de/misc/stack/mahapps-icons-list/
-            -->
-
-            <!--<VisualBrush x:Key="SaveIcon" Visual="{StaticResource appbar_save}" />-->
-            <converters:SoftwareStatusToImageConverter x:Key="MySoftwareStatusToImageConverter" />
-
-            <ObjectDataProvider x:Key="MySoftwareInstallStatusEnum"
-                                MethodName="GetValues"
-                                ObjectType="{x:Type sys:Enum}">
-                <ObjectDataProvider.MethodParameters>
-                    <x:Type TypeName="enums:SoftwareInstallStatusEnum" />
-                </ObjectDataProvider.MethodParameters>
-            </ObjectDataProvider>
+        <ResourceDictionary Source="../Resources/AppStyle/AppStyle.xaml">
         </ResourceDictionary>
     </Window.Resources>
 
@@ -50,7 +30,7 @@
                 <TextBlock HorizontalAlignment="Right" FontSize="8">
                     <Run Text="This Project is using the following products:" />
                     <LineBreak />
-                    <Run Text="MS .Net, Log4Net, MahApps.Metro, Xceed WPF, GalaSoft.MvvmLight, FlatIcon.com" />
+                    <Run Text=".NET, Log4Net, MahApps.Metro, Xceed WPF, GalaSoft.MvvmLight, FlatIcon.com" />
                 </TextBlock>
             </StatusBarItem>
         </StatusBar>
@@ -63,23 +43,50 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <!--  Grid of apps  -->
             <DockPanel Grid.Row="0">
-                <ToolBar DockPanel.Dock="Top">
-                    <Button Command="{Binding Path=ScanFolderCommand}">
-                        <StackPanel Orientation="Horizontal">
-                            <Rectangle Width="20" Height="20">
-                                <Rectangle.Fill>
-                                    <VisualBrush Visual="{StaticResource appbar_beer}" />
-                                </Rectangle.Fill>
-                            </Rectangle>
-                            <TextBlock Margin="5,0"
-                                       VerticalAlignment="Center"
-                                       Text="Re-Scan Root Folder" />
+                <GroupBox Header="Working Folder" DockPanel.Dock="Top">
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel>
+                            <ComboBox  VerticalAlignment="Center" MinWidth="250"
+                                  ItemsSource="{Binding Path=QSSettings.RecentWorkingFolders, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                  SelectedItem="{Binding Path=WorkingFolder, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                  IsEditable="False"
+                                  IsReadOnly="True" />
+                            <CheckBox  IsChecked="{Binding Path=ShowAllFolders, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                <TextBlock Text="Show All Folders" FontSize="10"></TextBlock>
+                            </CheckBox>
                         </StackPanel>
-                    </Button>
 
-                </ToolBar>
+                        <Button Command="{Binding Path=BrowseWorkingFolderCommand}" MinWidth="40">
+                            <StackPanel Orientation="Horizontal">
+                                <Rectangle Width="20" Height="20">
+                                    <Rectangle.Fill>
+                                        <VisualBrush Visual="{StaticResource appbar_folder_open}" />
+                                    </Rectangle.Fill>
+                                </Rectangle>
+                            </StackPanel>
+                        </Button>
+
+                        <Button Command="{Binding Path=ScanFolderCommand}" MinWidth="40">
+                            <StackPanel Orientation="Horizontal">
+                                <Rectangle Width="20" Height="20">
+                                    <Rectangle.Fill>
+                                        <VisualBrush Visual="{StaticResource appbar_refresh}" />
+                                    </Rectangle.Fill>
+                                </Rectangle>
+                            </StackPanel>
+                        </Button>
+                        <Button Command="{Binding Path=ClearRecentWorkingFolderCommand}" MinWidth="40" ToolTip="Clear Recent">
+                            <StackPanel Orientation="Horizontal">
+                                <Rectangle Width="20" Height="20">
+                                    <Rectangle.Fill>
+                                        <VisualBrush Visual="{StaticResource appbar_delete}" />
+                                    </Rectangle.Fill>
+                                </Rectangle>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </GroupBox>
 
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -88,41 +95,85 @@
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
 
-                    <DockPanel Grid.Column="0">
-                        <TextBlock DockPanel.Dock="Top" Text="Folder Tree" FontWeight="Bold" FontSize="14" />
+                    <GroupBox Grid.Column="0" Header="Folder Tree">
 
-                        <TreeView ItemsSource="{Binding Path=FoldersList}" SelectedItemChanged="TreeView_OnSelectedItemChanged">
-                            <TreeView.Resources>
-                                <!--how to display a "SoftwareDirectoryModel"-->
-                                <HierarchicalDataTemplate  DataType="{x:Type viewModel:SoftwareDirectoryViewModel}"
+                        <DockPanel>
+                            <TreeView ItemsSource="{Binding Path=FoldersList}" SelectedItemChanged="TreeView_OnSelectedItemChanged">
+                                <TreeView.Resources>
+                                    <!--how to display a "SoftwareDirectoryModel"-->
+                                    <HierarchicalDataTemplate  DataType="{x:Type viewModel:SoftwareDirectoryViewModel}"
                                                    ItemsSource="{Binding Path=SubDirs}">
-                                    <StackPanel Orientation="Horizontal">
-                                        <Image Source="{Binding Path=Status, Converter={StaticResource MySoftwareStatusToImageConverter}}" Width="24" Height="24" />
-                                        <TextBlock Text="{Binding Name}"  VerticalAlignment="Center" />
-                                    </StackPanel>
-                                </HierarchicalDataTemplate>
-                            </TreeView.Resources>
-                        </TreeView>
-                    </DockPanel>
-
+                                        <StackPanel Orientation="Horizontal">
+                                            <Image Source="{Binding Path=Status, Converter={StaticResource MySoftwareStatusToImageConverter}}" Width="24" Height="24" />
+                                            <TextBlock Text="{Binding Path=Name}"  VerticalAlignment="Center" />
+                                        </StackPanel>
+                                    </HierarchicalDataTemplate>
+                                </TreeView.Resources>
+                            </TreeView>
+                        </DockPanel>
+                    </GroupBox>
                     <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
 
-                    <StackPanel Grid.Column="2">
-                        <TextBlock DockPanel.Dock="Top" Text="Selected folder" FontWeight="Bold" FontSize="14" />
-                        <TextBlock Text="{Binding Path=SelectedSoftwareFolder.Name, UpdateSourceTrigger=PropertyChanged}" />
-                        <TextBlock Text="{Binding Path=SelectedSoftwareFolder.Status, UpdateSourceTrigger=PropertyChanged}" />
-                        <StackPanel Orientation="Horizontal">
-                            <Button Command="{Binding Path=SelectedSoftwareFolder.InstallSoftwareCommand}" MinHeight="50" MinWidth="100">
-                                <TextBlock Text="Install"></TextBlock>
-                            </Button>
-                            <Button Command="{Binding Path=SelectedSoftwareFolder.BrowseToFolderCommand}" MinHeight="50" MinWidth="100">
-                                <TextBlock Text="Browse..."></TextBlock>
-                            </Button>
-                            <Button Command="{Binding Path=SelectedSoftwareFolder.EditQSSettingsCommand}" MinHeight="50" MinWidth="100">
-                                <TextBlock Text="Edit Quick Setup Settings..."></TextBlock>
-                            </Button>
+                    <GroupBox Header="Selected Folder"  Grid.Column="2">
+
+                        <StackPanel>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="Name:"></TextBlock>
+                                <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Path=SelectedSoftwareFolder.Name, UpdateSourceTrigger=PropertyChanged}" />
+
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Status:"></TextBlock>
+                                <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal">
+                                    <Image Source="{Binding Path=SelectedSoftwareFolder.Status, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource MySoftwareStatusToImageConverter}}" Width="20" Height="20"></Image>
+                                    <TextBlock Text="{Binding Path=SelectedSoftwareFolder.Status, UpdateSourceTrigger=PropertyChanged}" />
+                                </StackPanel>
+
+                                <TextBlock Grid.Row="2" Grid.Column="0" Text="Notes:"></TextBlock>
+                                <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Path=SelectedSoftwareFolder.OriginalModel.NotesToolTip, UpdateSourceTrigger=PropertyChanged}" />
+                            </Grid>
+
+                            <WrapPanel Orientation="Vertical">
+                                <Button Command="{Binding Path=SelectedSoftwareFolder.InstallSoftwareCommand}" MinHeight="50" MinWidth="100">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Rectangle Width="20" Height="20" Margin="5">
+                                            <Rectangle.Fill>
+                                                <VisualBrush Visual="{StaticResource appbar_download}" />
+                                            </Rectangle.Fill>
+                                        </Rectangle>
+                                        <TextBlock Text="Install" VerticalAlignment="Center" FontSize="16"></TextBlock>
+                                    </StackPanel>
+                                </Button>
+                                <Button Command="{Binding Path=SelectedSoftwareFolder.BrowseToFolderCommand}" MinHeight="50" MinWidth="100">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Rectangle Width="20" Height="20" Margin="5">
+                                            <Rectangle.Fill>
+                                                <VisualBrush Visual="{StaticResource appbar_folder_open}" />
+                                            </Rectangle.Fill>
+                                        </Rectangle>
+                                        <TextBlock Text="Browse..." VerticalAlignment="Center" ></TextBlock>
+                                    </StackPanel>
+                                </Button>
+                                <Button Command="{Binding Path=SelectedSoftwareFolder.EditQSSettingsCommand}" MinHeight="50" MinWidth="100">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Rectangle Width="20" Height="20" Margin="5">
+                                            <Rectangle.Fill>
+                                                <VisualBrush Visual="{StaticResource appbar_folder_open}" />
+                                            </Rectangle.Fill>
+                                        </Rectangle>
+                                        <TextBlock Text="Quick Setup Settings..." VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Button>
+                            </WrapPanel>
                         </StackPanel>
-                    </StackPanel>
+                    </GroupBox>
                 </Grid>
             </DockPanel>
 

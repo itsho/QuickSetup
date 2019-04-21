@@ -56,7 +56,7 @@
     <Compile Include="Infra\Enums\AllEnums.cs" />
     <Compile Include="Infra\FilesHelper.cs" />
     <Compile Include="Infra\Logger.cs" />
-    <Compile Include="Models\AppsListModel.cs" />
+    <Compile Include="Models\AppSettings.cs" />
     <Compile Include="Models\SingleAppToInstallModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

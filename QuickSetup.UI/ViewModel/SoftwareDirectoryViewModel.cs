@@ -23,13 +23,8 @@ namespace QuickSetup.UI.ViewModel
         private readonly DirectoryInfo _directoryInfo;
 
         private SoftwareInstallStatusEnum _status;
-
-        public SingleSoftwareModel OriginalModel { get; private set; }
-
-        /// <summary>
-        /// in use for temporary edits by user before save
-        /// </summary>
-        public SingleSoftwareModel ClonedModel { get; private set; }
+        private SingleSoftwareModel _originalModel;
+        private SingleSoftwareModel _clonedModel;
 
         #endregion Data members
 
@@ -66,13 +61,57 @@ namespace QuickSetup.UI.ViewModel
 
         #region Properties
 
-        public string CurrentFolder { get => _directoryInfo.FullName; }
+        public SingleSoftwareModel OriginalModel
+        {
+            get => _originalModel;
+            private set
+            {
+                if (_originalModel != value)
+                {
+                    _originalModel = value;
+                    RaisePropertyChanged();
+                    RaisePropertyChanged(nameof(CurrentFolder));
+                }
+            }
+        }
+
+        /// <summary>
+        /// in use for temporary edits by user before save
+        /// </summary>
+        public SingleSoftwareModel ClonedModel
+        {
+            get => _clonedModel;
+            private set
+            {
+                if (_clonedModel != value)
+                {
+                    _clonedModel = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public string CurrentFolder
+        {
+            get
+            {
+               
+                return _directoryInfo.FullName;
+            }
+        }
 
         public List<SoftwareDirectoryViewModel> SubDirs { get; private set; }
 
         public string Name
         {
-            get { return _directoryInfo.Name; }
+            get
+            {
+                if (OriginalModel != null && !string.IsNullOrEmpty(OriginalModel.AppName))
+                {
+                    return OriginalModel.AppName;
+                }
+                return _directoryInfo.Name;
+            }
         }
 
         public List<string> ListOfIso6392 { get; private set; }
@@ -116,8 +155,9 @@ namespace QuickSetup.UI.ViewModel
 
             if (qsFiles.Length > 0)
             {
-                OriginalModel = FilesHelper.LoadSoftwareSettingsFromFile(qsFiles.FirstOrDefault());
+                OriginalModel = FilesHelper.LoadSingleSoftwareModelFromFile(qsFiles.FirstOrDefault());
                 ClonedModel = new SingleSoftwareModel();
+
                 ClonedModel.CopyDataFrom(OriginalModel);
                 RaisePropertyChanged(nameof(ClonedModel));
 
@@ -130,12 +170,15 @@ namespace QuickSetup.UI.ViewModel
                 }
             }
 
-            foreach (var subDir in _directoryInfo.EnumerateDirectories())
+            var subDirs = _directoryInfo.EnumerateDirectories().ToList();
+            foreach (var subDir in subDirs)
             {
                 var sub = new SoftwareDirectoryViewModel(subDir);
                 sub.Init();
                 SubDirs.Add(sub);
             }
+
+            Logger.Log.Debug($@"Finished initializing folder {_directoryInfo.FullName}. Found QS file: {qsFiles.Length > 0}, Processed {subDirs.Count()} subFolders");
         }
 
         public void RefreshSoftwareInstallStatusEnum()
@@ -267,7 +310,7 @@ namespace QuickSetup.UI.ViewModel
                 {
                     OriginalModel = new SingleSoftwareModel();
                     OriginalModel.AppName = _directoryInfo.Name;
-                    
+
                     // guess setup file name
                     var firstExe = _directoryInfo.GetFiles("*.exe", SearchOption.TopDirectoryOnly).FirstOrDefault();
                     OriginalModel.SetupFileName = firstExe?.Name;
@@ -313,8 +356,8 @@ namespace QuickSetup.UI.ViewModel
         {
             try
             {
-                if (OriginalModel == null || 
-                    string.IsNullOrEmpty(OriginalModel.SetupFileName) || 
+                if (OriginalModel == null ||
+                    string.IsNullOrEmpty(OriginalModel.SetupFileName) ||
                     Status == SoftwareInstallStatusEnum.Installed)
                 {
                     return false;
@@ -406,24 +449,41 @@ namespace QuickSetup.UI.ViewModel
 
         private void OnSaveChangesAndCloseCommand(ICloseable window)
         {
-            if (string.IsNullOrEmpty(ClonedModel.AppName))
+            try
             {
-                // default app name = folder name
-                ClonedModel.AppName = _directoryInfo.Name;
+                if (string.IsNullOrEmpty(ClonedModel.AppName))
+                {
+                    // default app name = folder name
+                    ClonedModel.AppName = _directoryInfo.Name;
+                }
+
+                // copy all values to original model
+                OriginalModel.CopyDataFrom(ClonedModel);
+                RaisePropertyChanged(nameof(OriginalModel));
+
+                // Delete old setting-files
+                var existingSettingFiles = _directoryInfo.GetFiles("*." + Constants.QUICK_SETUP_SETTINGS_FILE_EXTENSION);
+                foreach (var existingSettingFile in existingSettingFiles)
+                {
+                    File.Delete(existingSettingFile.FullName);
+                }
+
+                // save single file
+                var targetFileName = Path.Combine(_directoryInfo.FullName, OriginalModel.AppName + "." + Constants.QUICK_SETUP_SETTINGS_FILE_EXTENSION);
+                FilesHelper.SaveSingleSoftwareModelToFile(OriginalModel, targetFileName);
+
+                // check if software is installed
+                RefreshSoftwareInstallStatusEnum();
+                ((RelayCommand)InstallSoftwareCommand).RaiseCanExecuteChanged();
+
+                // notify main model that the window is closed
+                RaiseCloseWindowRequested(window, true);
+            }
+            catch (Exception ex)
+            {
+                Logger.Log.Error("Error while saving changes", ex);
             }
 
-            // copy all values to original model
-            OriginalModel.CopyDataFrom(ClonedModel);
-            RaisePropertyChanged(nameof(OriginalModel));
-
-            // save settings file
-            FilesHelper.SaveSoftwareSettingsToFile(OriginalModel, Path.Combine(_directoryInfo.FullName, OriginalModel.AppName + "." + Constants.QUICK_SETUP_SETTINGS_FILE_EXTENSION));
-
-            // check if software is installed 
-            RefreshSoftwareInstallStatusEnum();
-
-            // notify main model that the window is closed
-            RaiseCloseWindowRequested(window, true);
         }
 
         private void OnBrowseToSelectSetupFileCommand()
@@ -453,16 +513,16 @@ namespace QuickSetup.UI.ViewModel
                 var dialog = new OpenFileDialog();
                 dialog.Filter = "Any File | *.*";
                 dialog.Title = "Please select any file that marks the existence of " + OriginalModel.AppName;
-                    
+                dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+
                 if (dialog.ShowDialog().GetValueOrDefault(false))
                 {
-                    ClonedModel.ExistenceCheckFilePath = Path.GetFileName(dialog.FileName);
+                    ClonedModel.ExistenceCheckFilePath = dialog.FileName;
                     OnTranslatePathToEnvVarCommand();
                     OnCalculateMD5OfExistenceFilePathCommand();
 
                     RaisePropertyChanged(nameof(ClonedModel));
                 }
-
             }
             catch (Exception ex)
             {
