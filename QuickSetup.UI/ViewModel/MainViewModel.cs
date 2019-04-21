@@ -261,8 +261,10 @@ namespace QuickSetup.UI.ViewModel
                 foreach (var subFolder in rootSubFolders)
                 {
                     var sub = new SoftwareDirectoryViewModel(subFolder);
-                    sub.Init();
-                    FoldersList.Add(sub);
+                    if (sub.Init(ShowAllFolders))
+                    {
+                        FoldersList.Add(sub);
+                    }
                 }
             }
             catch (Exception ex)
