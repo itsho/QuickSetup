@@ -30,7 +30,7 @@ namespace QuickSetup.Logic.Infra
             return null;
         }
 
-        public static void SaveAll(List<SingleSoftwareModel> p_lstToSave)
+        public static void SaveAll(List<SingleSoftwareModel> lstToSave)
         {
             try
             {
@@ -40,7 +40,7 @@ namespace QuickSetup.Logic.Infra
                 Directory.CreateDirectory(Path.GetDirectoryName(Constants.AppsFileFullPath));
 
                 // serialize list
-                var strSerialized = Newtonsoft.Json.JsonConvert.SerializeObject(p_lstToSave);
+                var strSerialized = Newtonsoft.Json.JsonConvert.SerializeObject(lstToSave);
 
                 // save content into file
                 File.WriteAllText(Constants.AppsFileFullPath, strSerialized);

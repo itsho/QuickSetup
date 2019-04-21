@@ -1,142 +1,81 @@
 ﻿using GalaSoft.MvvmLight.Messaging;
 using MahApps.Metro.Controls;
 using QuickSetup.Logic.Infra;
+using QuickSetup.UI.Infra;
 using QuickSetup.UI.ViewModel;
 using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace QuickSetup.UI.Views
 {
-    public partial class MainView : MetroWindow
+    public partial class MainView : MetroWindow, ICloseable
     {
         public MainView()
         {
             InitializeComponent();
-            Messenger.Default.Register<NotificationMessage>(this, NotificationMessageReceived);
+            Messenger.Default.Register<NotificationMessage<SoftwareDirectoryViewModel>>(this, ShowSoftwareDirectoryView);
         }
 
-        private void CommandBinding_OnExecuted(object p_sender, ExecutedRoutedEventArgs p_e)
+        private void CommandBinding_OnExecuted(object sender, ExecutedRoutedEventArgs e)
         {
             Close();
         }
 
-        private void ButtonInstall_OnClick(object p_sender, RoutedEventArgs p_e)
+        private void OnContentOnOnCloseWindowRequested(SoftwareDirectoryViewModel sender, bool isSaveRequested, ICloseable window)
         {
-            try
-            {
-                Debugger.Break();
-                //Logger.Log.Debug("Install button clicked");
-                //var cell = Cell.FindFromChild(p_sender as DependencyObject);
-                //var singleApp = DataGridControl.GetDataGridContext(cell).GetItemFromContainer(cell.ParentRow) as SingleSoftwareViewModel;
+            sender.OnCloseWindowRequested -= OnContentOnOnCloseWindowRequested;
 
-                //if (singleApp != null && singleApp.InstallCommand.CanExecute(null))
-                //{
-                //    singleApp.InstallCommand.Execute(null);
-                //}
-            }
-            catch (Exception ex)
+            // if user clicked on save
+            if (isSaveRequested)
             {
-                Logger.Log.Error("Error while trying to install software", ex);
+                if (DataContext is MainViewModel mvm)
+                {
+                    // TODO: reload the folder tree or at least the selected item.
+                    Debugger.Break();
+
+                    //if (mvm.SaveAllApps.CanExecute(null))
+                    //{
+                    //    mvm.SaveAllApps.Execute(null);
+                    //}
+                }
             }
+
+            window.Close();
         }
 
-        private void ButtonEdit_OnClick(object p_sender, RoutedEventArgs p_e)
+        private void ShowSoftwareDirectoryView(NotificationMessage<SoftwareDirectoryViewModel> notificationMessage)
         {
             try
             {
-                Debugger.Break();
-                //Logger.Log.Debug("Edit button clicked");
-                //var cell = Cell.FindFromChild(p_sender as DependencyObject);
-                //var singleApp = DataGridControl.GetDataGridContext(cell).GetItemFromContainer(cell.ParentRow) as SingleSoftwareViewModel;
-
-                //if (singleApp != null && singleApp.EditSoftwareCommand.CanExecute(null))
-                //{
-                //    singleApp.EditSoftwareCommand.Execute(null);
-                //}
-            }
-            catch (Exception ex)
-            {
-                Logger.Log.Error("Error while trying to edit software", ex);
-            }
-        }
-
-        private void NotificationMessageReceived(NotificationMessage p_notificationMessage)
-        {
-            try
-            {
-                if (p_notificationMessage.Notification == Constants.MVVM_MESSAGE_SHOW_SINGLESOFTWAREVIEW)
+                if (notificationMessage.Notification == Constants.MVVM_MESSAGE_SHOW_SINGLESOFTWAREVIEW)
                 {
                     var ssv = new SingleSoftwareView();
-                    ssv.DataContext = p_notificationMessage.Sender;
-                    var singleSoftwareViewModel = p_notificationMessage.Sender as SingleSoftwareViewModel;
-                    if (singleSoftwareViewModel != null)
-                    {
-                        singleSoftwareViewModel.OnCloseWindowRequested += (p_blnIsSaveRequested) =>
-                        {
-                            // if user clicked on save
-                            if (p_blnIsSaveRequested)
-                            {
-                                var mvm = DataContext as MainViewModel;
-                                if (mvm != null)
-                                {
-                                    Debugger.Break();
+                    ssv.DataContext = notificationMessage.Content;
+                    notificationMessage.Content.OnCloseWindowRequested += OnContentOnOnCloseWindowRequested;
 
-                                    //if (mvm.SaveAllApps.CanExecute(null))
-                                    //{
-                                    //    mvm.SaveAllApps.Execute(null);
-                                    //}
-                                }
-                            }
-                            ssv.Close();
-                        };
-                    }
-
-                    //ssv.Owner = this;
-                    ssv.Show();
+                    //ssv.Parent = this;
+                    ssv.ShowDialog();
                 }
             }
             catch (Exception ex)
             {
-                Logger.Log.Error("Error while mvvm message recieved", ex);
+                Logger.Log.Error("Error while mvvm message received", ex);
             }
         }
 
-        private void ButtonRemove_OnClick(object p_sender, RoutedEventArgs p_e)
+        private void TreeView_OnSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            try
+            var tree = (TreeView)sender;
+            if (tree.SelectedItem is SoftwareDirectoryViewModel softwareDirectoryVm)
             {
-                Debugger.Break();
-
-                Logger.Log.Debug("Remove button clicked");
-
-                var res = MessageBox.Show("Are you sure you want to remove the software?", Constants.APPLICATIONNAME,
-                    MessageBoxButton.YesNo);
-
-                if (res == MessageBoxResult.Yes)
+                if (DataContext is MainViewModel mvm)
                 {
-                    /*var cell = Cell.FindFromChild(p_sender as DependencyObject);
-                    var singleApp =
-                        DataGridControl.GetDataGridContext(cell).GetItemFromContainer(cell.ParentRow) as
-                            SingleSoftwareViewModel;
-
-                    var mvm = DataContext as MainViewModel;
-                    if (mvm != null)
-                    {
-                        mvm.SoftwareList.Remove(singleApp);
-                        mvm.SelectedSoftware = mvm.SoftwareList.FirstOrDefault();
-                    }*/
+                    mvm.SelectedSoftwareFolder = softwareDirectoryVm;
                 }
             }
-            catch (Exception ex)
-            {
-                Logger.Log.Error("Error while trying to Remove software", ex);
-            }
         }
-
-       
     }
 }
