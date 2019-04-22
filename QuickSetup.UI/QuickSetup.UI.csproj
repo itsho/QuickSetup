@@ -37,6 +37,9 @@
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources\Icons\icons8-quick-mode-on-multi.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="CommonServiceLocator, Version=2.0.4.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
       <HintPath>..\packages\CommonServiceLocator.2.0.4\lib\net45\CommonServiceLocator.dll</HintPath>
@@ -187,15 +190,22 @@
     <Resource Include="Resources\Entypo-license.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Icons-flaticon\icons8-opposite-opinion-24.png" />
-    <Resource Include="Resources\Icons-flaticon\icons8-opposite-opinion-48.png" />
+    <Resource Include="Resources\Icons\icons8-opposite-opinion-24.png" />
+    <Resource Include="Resources\Icons\icons8-opposite-opinion-48.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Icons-flaticon\circumference1.png" />
-    <Resource Include="Resources\Icons-flaticon\circumference2.png" />
-    <Resource Include="Resources\Icons-flaticon\error.png" />
-    <Resource Include="Resources\Icons-flaticon\question.png" />
-    <Resource Include="Resources\Icons-flaticon\success.png" />
+    <Resource Include="Resources\Icons\flaticon-circumference1.png" />
+    <Resource Include="Resources\Icons\flaticon-circumference2.png" />
+    <Resource Include="Resources\Icons\flaticon-error.png" />
+    <Resource Include="Resources\Icons\flaticon-question.png" />
+    <Resource Include="Resources\Icons\flaticon-success.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\icons8-quick-mode-on-100.png" />
+    <Resource Include="Resources\Icons\icons8-quick-mode-on-24.png" />
+    <Resource Include="Resources\Icons\icons8-quick-mode-on-32.png" />
+    <Resource Include="Resources\Icons\icons8-quick-mode-on-48.png" />
+    <Resource Include="Resources\Icons\icons8-quick-mode-on-multi.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

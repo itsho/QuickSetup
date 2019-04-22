@@ -8,6 +8,7 @@
                       Title="Quick Setup"
                       Height="600"
                       Width="800"
+                      Icon="../Resources/Icons/icons8-quick-mode-on-48.png"
                       d:DataContext="{d:DesignInstance Type=viewModel:MainViewModel,
                                                        IsDesignTimeCreatable=True}"
                       BorderThickness="5"
@@ -29,7 +30,7 @@
                 <TextBlock HorizontalAlignment="Right" FontSize="8">
                     <Run Text="This Project is using the following products:" />
                     <LineBreak />
-                    <Run Text=".NET, Log4Net, MahApps.Metro, Xceed WPF, GalaSoft.MvvmLight, FlatIcon.com" />
+                    <Run Text=".NET, Log4Net, MahApps, Xceed WPF, MvvmLight, FlatIcon, Icons8" />
                 </TextBlock>
             </StatusBarItem>
         </StatusBar>

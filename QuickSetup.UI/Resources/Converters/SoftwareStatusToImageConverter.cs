@@ -17,28 +17,26 @@ namespace QuickSetup.UI.Resources.Converters
 
                 if (origValue == SoftwareInstallStatusEnum.Installed)
                 {
-                    return "pack://application:,,,/Resources/Icons-flaticon/success.png";
+                    return "pack://application:,,,/Resources/Icons/flaticon-success.png";
                 }
                 if (origValue == SoftwareInstallStatusEnum.NotInstalled)
                 {
-                    return "pack://application:,,,/Resources/Icons-flaticon/circumference1.png";
+                    return "pack://application:,,,/Resources/Icons/flaticon-circumference1.png";
                 }
                 if (origValue == SoftwareInstallStatusEnum.SetupFileMissing ||
                     origValue == SoftwareInstallStatusEnum.UnableToGetStatus)
                 {
-                    return "pack://application:,,,/Resources/Icons-flaticon/error.png";
+                    return "pack://application:,,,/Resources/Icons/flaticon-error.png";
                 }
 
                 if (origValue == SoftwareInstallStatusEnum.DifferentVersionDetected)
                 {
-                    return "pack://application:,,,/Resources/Icons-flaticon/icons8-opposite-opinion-24.png";
+                    return "pack://application:,,,/Resources/Icons/icons8-opposite-opinion-24.png";
                 }
-                
-
 
                 //if (origValue == SoftwareInstallStatusEnum.Unknown)
                 //{
-                //    return "pack://application:,,,/Resources/Icons-flaticon/question.png";
+                //    return "pack://application:,,,/Resources/flaticon/flaticon-question.png";
                 //}
                 return DependencyProperty.UnsetValue;
             }
