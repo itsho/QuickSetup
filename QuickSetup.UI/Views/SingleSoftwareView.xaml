@@ -6,6 +6,7 @@
                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                       xmlns:viewModel="clr-namespace:QuickSetup.UI.ViewModel"
+                      Icon="../Resources/Icons/icons8-quick-mode-on-48.png"
                       Title="Single Software - Edit"
                       MinWidth="400"
                       d:DataContext="{d:DesignInstance Type=viewModel:SoftwareDirectoryViewModel}"
@@ -14,13 +15,10 @@
                       SizeToContent="WidthAndHeight"
                       WindowStartupLocation="CenterOwner"
                       mc:Ignorable="d">
-   
-        <Window.Resources>
-            <ResourceDictionary Source="../Resources/AppStyle/AppStyle.xaml"/>
-        </Window.Resources>
 
-        
-    
+    <Window.Resources>
+        <ResourceDictionary Source="../Resources/AppStyle/AppStyle.xaml" />
+    </Window.Resources>
 
     <StackPanel Margin="10">
         <Grid>
@@ -170,7 +168,7 @@
                                         <VisualBrush Visual="{StaticResource appbar_folder}" />
                                     </Rectangle.Fill>
                                 </Rectangle>
-                            </InlineUIContainer><Run Text=" Folder"/></TextBlock>
+                            </InlineUIContainer><Run Text=" Folder" /></TextBlock>
                         <TextBlock Grid.Row="0"
                                  Grid.Column="1"
                                  Text="{Binding Path=CurrentFolder,
@@ -182,7 +180,7 @@
                                         <VisualBrush Visual="{StaticResource appbar_page}" />
                                     </Rectangle.Fill>
                                 </Rectangle>
-                            </InlineUIContainer><Run Text=" File Name"/></TextBlock>
+                            </InlineUIContainer><Run Text=" File Name" /></TextBlock>
                         <DockPanel Grid.Row="1" Grid.Column="1">
                             <Button MinWidth="50"
                                     Command="{Binding Path=BrowseToSelectSetupFileCommand}"
@@ -198,7 +196,7 @@
                                         <VisualBrush Visual="{StaticResource appbar_sound_mute}" />
                                     </Rectangle.Fill>
                                 </Rectangle>
-                            </InlineUIContainer><Run Text=" Parameters"/></TextBlock>
+                            </InlineUIContainer><Run Text=" Parameters" /></TextBlock>
                         <TextBox Grid.Row="2"
                                  Grid.Column="1"
                                  Text="{Binding Path=ClonedModel.SetupSilentParams,
