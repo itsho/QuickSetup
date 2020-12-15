@@ -5,7 +5,8 @@
                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                       xmlns:viewModel="clr-namespace:QuickSetup.UI.ViewModel"
-                      Title="Quick Setup"
+                      xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+                      Title="{Binding Path=Title}"
                       Height="600"
                       Width="800"
                       Icon="../Resources/Icons/icons8-quick-mode-on-48.png"
@@ -57,21 +58,22 @@
                             </CheckBox>
                         </StackPanel>
 
-                        <Button Command="{Binding Path=BrowseWorkingFolderCommand}" MinWidth="40">
+                        <Button Command="{Binding Path=BrowseWorkingFolderCommand}" MinWidth="40"
+                                >
                             <StackPanel Orientation="Horizontal">
                                 <Rectangle Width="20" Height="20">
                                     <Rectangle.Fill>
-                                        <VisualBrush Visual="{StaticResource appbar_folder_open}" />
+                                        <VisualBrush Visual="{iconPacks:FontAwesome Kind=FolderOpenRegular}" />
                                     </Rectangle.Fill>
                                 </Rectangle>
                             </StackPanel>
                         </Button>
 
-                        <Button Command="{Binding Path=ScanFolderCommand}" MinWidth="40">
+                        <Button Command="{Binding Path=ScanFolderCommand}" MinWidth="40" ToolTip="Scan Folder">
                             <StackPanel Orientation="Horizontal">
                                 <Rectangle Width="20" Height="20">
                                     <Rectangle.Fill>
-                                        <VisualBrush Visual="{StaticResource appbar_refresh}" />
+                                        <VisualBrush Visual="{iconPacks:FontAwesome Kind=CircleRegular}" />
                                     </Rectangle.Fill>
                                 </Rectangle>
                             </StackPanel>
@@ -80,7 +82,7 @@
                             <StackPanel Orientation="Horizontal">
                                 <Rectangle Width="20" Height="20">
                                     <Rectangle.Fill>
-                                        <VisualBrush Visual="{StaticResource appbar_delete}" />
+                                        <VisualBrush Visual="{iconPacks:FontAwesome Kind=TrashAltRegular}" />
                                     </Rectangle.Fill>
                                 </Rectangle>
                             </StackPanel>
@@ -146,7 +148,7 @@
                                         <StackPanel Orientation="Horizontal">
                                             <Rectangle Width="20" Height="20" Margin="5">
                                                 <Rectangle.Fill>
-                                                    <VisualBrush Visual="{StaticResource appbar_download}" />
+                                                    <VisualBrush Visual="{iconPacks:FontAwesome Kind=DownloadSolid}" />
                                                 </Rectangle.Fill>
                                             </Rectangle>
                                             <TextBlock Text="Install" VerticalAlignment="Center" FontSize="16"></TextBlock>
@@ -156,7 +158,7 @@
                                         <StackPanel Orientation="Horizontal">
                                             <Rectangle Width="20" Height="20" Margin="5">
                                                 <Rectangle.Fill>
-                                                    <VisualBrush Visual="{StaticResource appbar_folder_open}" />
+                                                    <VisualBrush Visual="{iconPacks:FontAwesome Kind=FolderOpenRegular}" />
                                                 </Rectangle.Fill>
                                             </Rectangle>
                                             <TextBlock Text="Browse..." VerticalAlignment="Center" ></TextBlock>
@@ -167,7 +169,7 @@
                                     <StackPanel Orientation="Horizontal">
                                         <Rectangle Width="20" Height="20" Margin="5">
                                             <Rectangle.Fill>
-                                                <VisualBrush Visual="{StaticResource appbar_edit}" />
+                                                <VisualBrush Visual="{iconPacks:FontAwesome Kind=EditRegular}" />
                                             </Rectangle.Fill>
                                         </Rectangle>
                                         <TextBlock Text="Quick Setup Settings..." VerticalAlignment="Center" />

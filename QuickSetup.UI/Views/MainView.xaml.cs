@@ -49,6 +49,7 @@ namespace QuickSetup.UI.Views
                 if (notificationMessage.Notification == Constants.MVVM_MESSAGE_SHOW_SINGLESOFTWAREVIEW)
                 {
                     var ssv = new SingleSoftwareView();
+                    ssv.WindowStartupLocation = WindowStartupLocation.CenterOwner;
                     ssv.DataContext = notificationMessage.Content;
                     notificationMessage.Content.OnCloseWindowRequested += OnContentOnOnCloseWindowRequested;
 

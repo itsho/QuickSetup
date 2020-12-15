@@ -6,6 +6,7 @@ using QuickSetup.Logic.Infra;
 using QuickSetup.Logic.Models;
 using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Windows.Input;
@@ -67,11 +68,28 @@ namespace QuickSetup.UI.ViewModel
                 //},
                 //lstPossibleCategories));
 
+                Title = Constants.APPLICATIONNAME + " 1.2.3.4";
+
                 #endregion design mode
             }
             // Code runs "for real"
             else
             {
+                Logger.Setup();
+
+                #region get version
+
+                //http://stackoverflow.com/a/909583/426315
+
+                var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+                var fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
+
+                #endregion get version
+
+                Logger.Log.Debug("Start new run - version " + fvi.FileVersion);
+
+                Title = Constants.APPLICATIONNAME + " " + fvi.FileVersion;
+
                 InitLog4NetOutputToWindow();
                 LoadAppSettings();
                 ScanFolderCommand.Execute(null);
@@ -154,6 +172,12 @@ namespace QuickSetup.UI.ViewModel
         {
             get { return _strLogOutput; }
             set { Set(ref _strLogOutput, value, nameof(LogOutputToWindow)); }
+        }
+
+        public string Title
+        {
+            get;
+            set;
         }
 
         #endregion Properties
