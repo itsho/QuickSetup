@@ -243,20 +243,34 @@ namespace QuickSetup.UI.ViewModel
                 {
                     //http://stackoverflow.com/a/22825275/426315
                     var registryRoot = Registry.CurrentUser;
-                    var strKeyToOpen = OriginalModel.ExistenceCheckRegistryKey;
+                    var strKeyToOpen = OriginalModel.ExistenceCheckRegistryKey
+                        .Replace(@"Computer\", "");
 
-                    if (OriginalModel.ExistenceCheckRegistryKey.StartsWith(Constants.HKLM, StringComparison.Ordinal))
+                    if (strKeyToOpen.StartsWith(Constants.HKLM, StringComparison.Ordinal))
                     {
-                        registryRoot = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64);
-                        strKeyToOpen = OriginalModel.ExistenceCheckRegistryKey.Replace(Constants.HKLM + @"\", string.Empty);
+                        registryRoot =  RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64);
+                        strKeyToOpen = strKeyToOpen.Replace($"{Constants.HKLM}\\", string.Empty);
                     }
-                    else if (OriginalModel.ExistenceCheckRegistryKey.StartsWith(Constants.HKCU, StringComparison.Ordinal))
+                    else if (strKeyToOpen.StartsWith(Constants.HKCU, StringComparison.Ordinal))
                     {
                         registryRoot = RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, RegistryView.Registry64);
-                        strKeyToOpen = OriginalModel.ExistenceCheckRegistryKey.Replace(Constants.HKCU + @"\", string.Empty);
+                        strKeyToOpen = strKeyToOpen.Replace($"{Constants.HKCU}\\", string.Empty);
                     }
 
                     var registryKey = registryRoot.OpenSubKey(strKeyToOpen);
+                    
+                    if (registryKey == null)
+                    {
+                        if (registryRoot.Name == Constants.HKLM)
+                        {
+                            registryRoot = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32);
+                        }
+                        else
+                        {
+                            registryRoot = RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, RegistryView.Registry32);
+                        }
+                        registryKey = registryRoot.OpenSubKey(strKeyToOpen);
+                    }
 
                     // if key exists
                     if (registryKey != null)
@@ -549,7 +563,8 @@ namespace QuickSetup.UI.ViewModel
         {
             try
             {
-                // I want to avoid RegJump since I'm not sure if the way i'm using it is allowed for distribution
+                // I wanted to avoid RegJump since I'm not sure if the way i'm using it is allowed for distribution
+                // that's why I'm using a trick called "LastKey" and re-opening regedit...
 
                 var lstProcRegEdit = Process.GetProcessesByName("regedit");
                 if (lstProcRegEdit.Length > 0)
@@ -567,12 +582,10 @@ namespace QuickSetup.UI.ViewModel
                         RegistryKeyPermissionCheck.ReadWriteSubTree);
                 if (keyRegedit != null)
                 {
-                    var arrRegPath = ClonedModel.ExistenceCheckRegistryKey.Split('\\');
+                    ClonedModel.ExistenceCheckRegistryKey = ClonedModel.ExistenceCheckRegistryKey.TrimEnd('\\');
 
-                    // remove reg value to get the key alone
-                    var strPathKey = ClonedModel.ExistenceCheckRegistryKey.Replace("\\" + arrRegPath.LastOrDefault(), string.Empty);
                     // set LastKey value
-                    keyRegedit.SetValue("LastKey", strPathKey, RegistryValueKind.String);
+                    keyRegedit.SetValue("LastKey", ClonedModel.ExistenceCheckRegistryKey, RegistryValueKind.String);
                 }
 
                 // start regedit

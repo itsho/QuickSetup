@@ -6,6 +6,7 @@
                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                       xmlns:viewModel="clr-namespace:QuickSetup.UI.ViewModel"
+                      xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
                       Icon="../Resources/Icons/icons8-quick-mode-on-48.png"
                       Title="Single Software - Edit"
                       MinWidth="400"
@@ -39,7 +40,7 @@
                        VerticalAlignment="Center">
                 <Rectangle Width="20" Height="20">
                     <Rectangle.Fill>
-                        <VisualBrush Visual="{StaticResource appbar_os_windows_8}" />
+                        <VisualBrush Visual="{iconPacks:FontAwesome Kind=WindowsBrands}" />
                     </Rectangle.Fill>
                 </Rectangle>
                 <Run Text="Name" />
@@ -57,7 +58,7 @@
                        VerticalAlignment="Center">
                 <Rectangle Width="20" Height="20">
                     <Rectangle.Fill>
-                        <VisualBrush Visual="{StaticResource appbar_globe}" />
+                        <VisualBrush Visual="{iconPacks:FontAwesome Kind=GlobeSolid}" />
                     </Rectangle.Fill>
                 </Rectangle>
                 <Run Text="Language" />
@@ -81,7 +82,7 @@
                        VerticalAlignment="Center">
                 <Rectangle Width="20" Height="15">
                     <Rectangle.Fill>
-                        <VisualBrush Visual="{StaticResource appbar_input_question}" />
+                        <VisualBrush Visual="{iconPacks:FontAwesome Kind=QuestionSolid}" />
                     </Rectangle.Fill>
                 </Rectangle>
                 <Run Text="Category" />
@@ -101,7 +102,7 @@
                        VerticalAlignment="Center">
                 <Rectangle Width="20" Height="20">
                     <Rectangle.Fill>
-                        <VisualBrush Visual="{StaticResource appbar_notification_above_multiple}" />
+                        <VisualBrush Visual="{iconPacks:FontAwesome Kind=StickyNoteRegular}" />
                     </Rectangle.Fill>
                 </Rectangle>
                 <Run Text="Notes" />
@@ -165,7 +166,7 @@
                                    VerticalAlignment="Center"><InlineUIContainer>
                                 <Rectangle Width="20" Height="20">
                                     <Rectangle.Fill>
-                                        <VisualBrush Visual="{StaticResource appbar_folder}" />
+                                        <VisualBrush Visual="{iconPacks:FontAwesome Kind=FolderRegular}" />
                                     </Rectangle.Fill>
                                 </Rectangle>
                             </InlineUIContainer><Run Text=" Folder" /></TextBlock>
@@ -177,7 +178,7 @@
                         <TextBlock Grid.Row="1" Grid.Column="0"><InlineUIContainer>
                                 <Rectangle Width="20" Height="20">
                                     <Rectangle.Fill>
-                                        <VisualBrush Visual="{StaticResource appbar_page}" />
+                                        <VisualBrush Visual="{iconPacks:FontAwesome Kind=FileAltRegular}" />
                                     </Rectangle.Fill>
                                 </Rectangle>
                             </InlineUIContainer><Run Text=" File Name" /></TextBlock>
@@ -193,7 +194,7 @@
                         <TextBlock Grid.Row="2" Grid.Column="0"><InlineUIContainer>
                                 <Rectangle Width="20" Height="20">
                                     <Rectangle.Fill>
-                                        <VisualBrush Visual="{StaticResource appbar_sound_mute}" />
+                                        <VisualBrush Visual="{iconPacks:FontAwesome Kind=BookOpenSolid}" />
                                     </Rectangle.Fill>
                                 </Rectangle>
                             </InlineUIContainer><Run Text=" Parameters" /></TextBlock>
@@ -324,7 +325,7 @@
                     <ControlTemplate>
                         <Rectangle Width="30" Height="30">
                             <Rectangle.Fill>
-                                <VisualBrush Visual="{StaticResource appbar_save}" />
+                                <VisualBrush Visual="{iconPacks:FontAwesome Kind=SaveRegular}" />
                             </Rectangle.Fill>
                         </Rectangle>
                     </ControlTemplate>
@@ -340,7 +341,7 @@
                     <ControlTemplate>
                         <Rectangle Width="30" Height="30">
                             <Rectangle.Fill>
-                                <VisualBrush Visual="{StaticResource appbar_close}" />
+                                <VisualBrush Visual="{iconPacks:FontAwesome Kind=WindowCloseRegular}" />
                             </Rectangle.Fill>
                         </Rectangle>
                     </ControlTemplate>
