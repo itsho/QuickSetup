@@ -1,9 +1,8 @@
-﻿using QuickSetup.Logic.Infra;
-using QuickSetup.Logic.Infra.Enums;
-using System;
+﻿using System;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
+using QuickSetup.UI.Infra;
 
 namespace QuickSetup.UI.Resources.Converters
 {
@@ -19,10 +18,12 @@ namespace QuickSetup.UI.Resources.Converters
                 {
                     return "pack://application:,,,/Resources/Icons/flaticon-success.png";
                 }
+
                 if (origValue == SoftwareInstallStatusEnum.NotInstalled)
                 {
-                    return "pack://application:,,,/Resources/Icons/flaticon-circumference1.png";
+                    return "pack://application:,,,/Resources/Icons/icons8-software-24.png";
                 }
+
                 if (origValue == SoftwareInstallStatusEnum.SetupFileMissing ||
                     origValue == SoftwareInstallStatusEnum.UnableToGetStatus)
                 {
@@ -34,17 +35,16 @@ namespace QuickSetup.UI.Resources.Converters
                     return "pack://application:,,,/Resources/Icons/icons8-opposite-opinion-24.png";
                 }
 
-                //if (origValue == SoftwareInstallStatusEnum.Unknown)
-                //{
-                //    return "pack://application:,,,/Resources/flaticon/flaticon-question.png";
-                //}
-                return DependencyProperty.UnsetValue;
+                if (origValue == SoftwareInstallStatusEnum.Unknown)
+                {
+                    return "pack://application:,,,/Resources/Icons/icons8-folder-24.png";
+                }
             }
             catch (Exception ex)
             {
                 Logger.Log.Error(ex);
-                return string.Empty;
             }
+            return DependencyProperty.UnsetValue;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

@@ -5,7 +5,6 @@
 	- add ability to run ps1/batch files as "run"
 - on first time load - use same folder [open local folder if nothing else selected]
 - open last folder (save in reg)
-- change refresh icon!
 - BUG: log is uncollapsable in small screens
 	- limit log size on window
 - do not allow add QS for a folder with subfolders
@@ -32,4 +31,5 @@
 - APP: set deafult photo viewer (detect via registry!?)
 
 # Change Log
+- change refresh icon!
 - show version on top

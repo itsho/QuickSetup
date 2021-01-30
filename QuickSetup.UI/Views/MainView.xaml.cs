@@ -1,10 +1,8 @@
 ﻿using GalaSoft.MvvmLight.Messaging;
 using MahApps.Metro.Controls;
-using QuickSetup.Logic.Infra;
 using QuickSetup.UI.Infra;
 using QuickSetup.UI.ViewModel;
 using System;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -16,7 +14,8 @@ namespace QuickSetup.UI.Views
         public MainView()
         {
             InitializeComponent();
-            Messenger.Default.Register<NotificationMessage<SoftwareDirectoryViewModel>>(this, ShowSoftwareDirectoryView);
+            Messenger.Default.Register<NotificationMessage<SoftwareDirectoryViewModel>>(this, ProcessMessagesFromSoftwareDirectoryViewModel);
+            Messenger.Default.Register<NotificationMessage<MainViewModel>>(this, ProcessMessagesFromMainViewModel);
         }
 
         private void CommandBinding_OnExecuted(object sender, ExecutedRoutedEventArgs e)
@@ -33,8 +32,8 @@ namespace QuickSetup.UI.Views
             {
                 if (DataContext is MainViewModel mvm)
                 {
-                    // TODO: reload the folder tree or at least the selected item.
-                     
+                    // TODO: reload the folder tree icon and text?.
+
                     //Debugger.Break();
                 }
             }
@@ -42,19 +41,54 @@ namespace QuickSetup.UI.Views
             window.Close();
         }
 
-        private void ShowSoftwareDirectoryView(NotificationMessage<SoftwareDirectoryViewModel> notificationMessage)
+        private void ProcessMessagesFromSoftwareDirectoryViewModel(NotificationMessage<SoftwareDirectoryViewModel> notificationMessage)
         {
             try
             {
                 if (notificationMessage.Notification == Constants.MVVM_MESSAGE_SHOW_SINGLESOFTWAREVIEW)
                 {
+                    if (notificationMessage.Content.SubDirs.Count > 0)
+                    {
+                        var res = MessageBox.Show("It is not recommended to create setup from a PARENT folder." +
+                                                  Environment.NewLine +
+                                                  "Do you want to continue?",
+                            Constants.APPLICATIONNAME,
+                            MessageBoxButton.YesNo);
+                        if (res == MessageBoxResult.No)
+                        {
+                            return;
+                        }
+                    }
+
                     var ssv = new SingleSoftwareView();
                     ssv.WindowStartupLocation = WindowStartupLocation.CenterOwner;
                     ssv.DataContext = notificationMessage.Content;
                     notificationMessage.Content.OnCloseWindowRequested += OnContentOnOnCloseWindowRequested;
 
                     //ssv.Parent = this;
+                    ssv.Owner = this;
                     ssv.ShowDialog();
+
+                    // refresh current item
+                    var vm = DataContext as MainViewModel;
+                    vm?.RaisePropertyChanged(nameof(vm.SelectedSoftwareFolder));
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log.Error("Error while mvvm message received", ex);
+            }
+        }
+
+        private void ProcessMessagesFromMainViewModel(NotificationMessage<MainViewModel> notificationMessage)
+        {
+            try
+            {
+                if (notificationMessage.Notification == Constants.MVVM_MESSAGE_SHOW_ABOUTVIEW)
+                {
+                    var av = new AboutView();
+                    av.Owner = this;
+                    av.ShowDialog();
                 }
             }
             catch (Exception ex)

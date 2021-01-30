@@ -1,10 +1,10 @@
-﻿using Newtonsoft.Json;
-using QuickSetup.Logic.Models;
-using System;
+﻿using System;
 using System.IO;
 using System.Security.Cryptography;
+using Newtonsoft.Json;
+using QuickSetup.UI.Models;
 
-namespace QuickSetup.Logic.Infra
+namespace QuickSetup.UI.Infra
 {
     public class FilesHelper
     {

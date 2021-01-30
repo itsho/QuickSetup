@@ -2,10 +2,8 @@
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using Microsoft.Win32;
-using QuickSetup.Logic.Infra;
-using QuickSetup.Logic.Infra.Enums;
-using QuickSetup.Logic.Models;
 using QuickSetup.UI.Infra;
+using QuickSetup.UI.Models;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -49,12 +47,7 @@ namespace QuickSetup.UI.ViewModel
             BrowseToSelectSetupFileCommand = new RelayCommand(OnBrowseToSelectSetupFileCommand);
             OpenRegistryKeyCommand = new RelayCommand(OnOpenRegistryKeyCommand, CanExecuteOpenRegistryKeyCommand);
             BrowseToExistenceCheckFileCommand = new RelayCommand(OnBrowseToExistenceCheckFileCommand);
-
-            //TODO: Dal.LoadListOfLanguagesIso6392();
-            ListOfIso6392 = new List<string>();
-
-            //TODO: load categories;
-            PossibleCategories = new List<string>();
+            OpenLatestVersionUrlCommand = new RelayCommand(OnOpenLatestVersionUrlCommand, CanExecuteOpenLatestVersionUrlCommand);
         }
 
         #endregion CTOR
@@ -95,11 +88,13 @@ namespace QuickSetup.UI.ViewModel
         {
             get
             {
-               
                 return _directoryInfo.FullName;
             }
         }
 
+        /// <summary>
+        /// in use in HierarchicalDataTemplate
+        /// </summary>
         public List<SoftwareDirectoryViewModel> SubDirs { get; private set; }
 
         public string Name
@@ -113,9 +108,6 @@ namespace QuickSetup.UI.ViewModel
                 return _directoryInfo.Name;
             }
         }
-
-        public List<string> ListOfIso6392 { get; private set; }
-        public List<string> PossibleCategories { get; private set; }
 
         public ICommand InstallSoftwareCommand { get; private set; }
         public ICommand EditQSSettingsCommand { get; private set; }
@@ -139,6 +131,8 @@ namespace QuickSetup.UI.ViewModel
             get => _status;
             set => Set(ref _status, value, nameof(Status));
         }
+
+        public ICommand OpenLatestVersionUrlCommand { get; private set; }
 
         public event CloseWindowRequested OnCloseWindowRequested;
 
@@ -248,7 +242,7 @@ namespace QuickSetup.UI.ViewModel
 
                     if (strKeyToOpen.StartsWith(Constants.HKLM, StringComparison.Ordinal))
                     {
-                        registryRoot =  RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64);
+                        registryRoot = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64);
                         strKeyToOpen = strKeyToOpen.Replace($"{Constants.HKLM}\\", string.Empty);
                     }
                     else if (strKeyToOpen.StartsWith(Constants.HKCU, StringComparison.Ordinal))
@@ -258,7 +252,7 @@ namespace QuickSetup.UI.ViewModel
                     }
 
                     var registryKey = registryRoot.OpenSubKey(strKeyToOpen);
-                    
+
                     if (registryKey == null)
                     {
                         if (registryRoot.Name == Constants.HKLM)
@@ -512,7 +506,6 @@ namespace QuickSetup.UI.ViewModel
             {
                 Logger.Log.Error("Error while saving changes", ex);
             }
-
         }
 
         private void OnBrowseToSelectSetupFileCommand()
@@ -520,7 +513,7 @@ namespace QuickSetup.UI.ViewModel
             try
             {
                 var dialog = new OpenFileDialog();
-                dialog.Filter = "Setup files (*.exe, *.msi, *.bat, *.cmd, *.vbs) | *.exe; *.msi; *.bat; *.cmd; *.vbs";
+                dialog.Filter = "Setup files (*.exe, *.msi, *.ps1, *.bat, *.cmd, *.vbs) | *.exe; *.msi; *.ps1; *.bat; *.cmd; *.vbs";
                 dialog.Title = "Please select setup file.";
                 dialog.InitialDirectory = _directoryInfo.FullName;
                 if (dialog.ShowDialog().GetValueOrDefault(false))
@@ -605,6 +598,23 @@ namespace QuickSetup.UI.ViewModel
         private bool CanExecuteTranslatePathToEnvVarCommand()
         {
             return !string.IsNullOrWhiteSpace(ClonedModel.ExistenceCheckFilePath);
+        }
+
+        private bool CanExecuteOpenLatestVersionUrlCommand()
+        {
+            return !string.IsNullOrEmpty(ClonedModel.LatestVersionURL);
+        }
+
+        private void OnOpenLatestVersionUrlCommand()
+        {
+            try
+            {
+                Process.Start(ClonedModel.LatestVersionURL);
+            }
+            catch (Exception ex)
+            {
+                Logger.Log.Error("Error while opening URL", ex);
+            }
         }
 
         #endregion private methods

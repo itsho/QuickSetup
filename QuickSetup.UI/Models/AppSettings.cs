@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace QuickSetup.Logic.Models
+namespace QuickSetup.UI.Models
 {
     public class AppSettings
     {

@@ -64,16 +64,37 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Infra\AllEnums.cs" />
+    <Compile Include="Infra\Constants.cs" />
+    <Compile Include="Infra\DialogCloser.cs" />
+    <Compile Include="Infra\FilesHelper.cs" />
+    <Compile Include="Infra\HardwareLogic.cs" />
     <Compile Include="Infra\ICloseable.cs" />
+    <Compile Include="Infra\Logger.cs" />
+    <Compile Include="Infra\WinAPI32.cs" />
+    <Compile Include="Models\AppSettings.cs" />
+    <Compile Include="Models\SingleAppToInstallModel.cs" />
     <Compile Include="Resources\Converters\EnumDescriptionConverter.cs" />
     <Compile Include="Resources\Converters\SoftwareStatusToImageConverter.cs" />
+    <Compile Include="SmartNet\Helper.cs" />
+    <Compile Include="SmartNet\Objects.cs" />
+    <Compile Include="SmartNet\Resource.cs" />
+    <Compile Include="SmartNet\Smart.cs" />
+    <Compile Include="SmartNet\WmiController.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\SoftwareDirectoryViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
+    <Compile Include="Views\AboutView.xaml.cs">
+      <DependentUpon>AboutView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\SingleSoftwareView.xaml.cs">
       <DependentUpon>SingleSoftwareView.xaml</DependentUpon>
     </Compile>
     <Page Include="Resources\AppStyle\AppStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\AboutView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -127,12 +148,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\QuickSetup.Logic\QuickSetup.Logic.csproj">
-      <Project>{57cd90fa-e8ad-4583-8de4-eee693456b73}</Project>
-      <Name>QuickSetup.Logic</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\Icons\icons8-opposite-opinion-24.png" />
     <Resource Include="Resources\Icons\icons8-opposite-opinion-48.png" />
   </ItemGroup>
@@ -158,21 +173,21 @@
       <Version>4.1.0</Version>
     </PackageReference>
     <PackageReference Include="Extended.Wpf.Toolkit">
-      <Version>4.0.1</Version>
+      <Version>4.0.2</Version>
     </PackageReference>
     <PackageReference Include="Fody">
-      <Version>6.2.4</Version>
+      <Version>6.3.0</Version>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="log4net">
-      <Version>2.0.8</Version>
+      <Version>2.0.12</Version>
     </PackageReference>
     <PackageReference Include="MahApps.Metro">
-      <Version>2.2.0</Version>
+      <Version>2.4.3</Version>
     </PackageReference>
     <PackageReference Include="MahApps.Metro.IconPacks">
-      <Version>4.4.0</Version>
+      <Version>4.8.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.WindowsAPICodePack-Shell">
       <Version>1.1.0</Version>
@@ -180,10 +195,23 @@
     <PackageReference Include="MvvmLight">
       <Version>5.4.1.1</Version>
     </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>12.0.3</Version>
+    </PackageReference>
+    <PackageReference Include="System.Management">
+      <Version>5.0.0</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="FodyWeavers.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\icons8-folder-24.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\icons8-software-24.png" />
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

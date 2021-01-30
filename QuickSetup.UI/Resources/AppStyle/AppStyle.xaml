@@ -3,40 +3,38 @@
                     xmlns:converters="clr-namespace:QuickSetup.UI.Resources.Converters">
 
     <converters:SoftwareStatusToImageConverter x:Key="MySoftwareStatusToImageConverter" />
-   
-    <Style TargetType="Grid" >
+
+    <Style TargetType="Grid">
         <Setter Property="Margin" Value="5"></Setter>
     </Style>
 
-    <Style TargetType="TabControl" BasedOn="{StaticResource {x:Type TabControl}}">
+    <Style TargetType="TabControl">
         <Setter Property="Margin" Value="5"></Setter>
     </Style>
 
-    <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+    <Style TargetType="TextBlock">
         <Setter Property="Margin" Value="3"></Setter>
         <Setter Property="VerticalAlignment" Value="Center" />
     </Style>
 
-    <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+    <Style TargetType="TextBox">
         <Setter Property="Margin" Value="3"></Setter>
         <Setter Property="VerticalAlignment" Value="Center" />
     </Style>
 
-    <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+    <Style TargetType="Button">
         <Setter Property="Margin" Value="5"></Setter>
     </Style>
-    
-    <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
+
+    <Style TargetType="ComboBox">
         <Setter Property="Margin" Value="3"></Setter>
     </Style>
 
-    <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
+    <Style TargetType="CheckBox">
         <Setter Property="Margin" Value="3"></Setter>
     </Style>
 
-
-    
-    <Style x:Key="TextBlockNotesStyle" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+    <Style x:Key="TextBlockNotesStyle" TargetType="TextBlock">
         <Setter Property="Background" Value="LightYellow"></Setter>
         <Setter Property="Foreground" Value="Gray"></Setter>
         <Setter Property="FontSize" Value="9"></Setter>

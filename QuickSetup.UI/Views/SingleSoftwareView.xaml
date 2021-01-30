@@ -1,12 +1,12 @@
 ﻿<controls:MetroWindow x:Class="QuickSetup.UI.Views.SingleSoftwareView"
                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                      x:Name="SoftwareViewWindow"
-                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                       xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+                      xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                       xmlns:viewModel="clr-namespace:QuickSetup.UI.ViewModel"
-                      xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+                      x:Name="SoftwareViewWindow"
                       Icon="../Resources/Icons/icons8-quick-mode-on-48.png"
                       Title="Single Software - Edit"
                       MinWidth="400"
@@ -33,6 +33,7 @@
                 <RowDefinition />
                 <RowDefinition />
                 <RowDefinition />
+                <RowDefinition />
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Row="0"
@@ -52,52 +53,26 @@
                                     UpdateSourceTrigger=PropertyChanged,
                                     Mode=TwoWay}" />
 
-            <TextBlock Grid.Row="1"
+            <TextBlock Grid.Row="3"
                        Grid.Column="0"
-                       Visibility="Collapsed"
                        VerticalAlignment="Center">
                 <Rectangle Width="20" Height="20">
                     <Rectangle.Fill>
-                        <VisualBrush Visual="{iconPacks:FontAwesome Kind=GlobeSolid}" />
+                        <VisualBrush Visual="{iconPacks:FontAwesome Kind=LightbulbRegular}" />
                     </Rectangle.Fill>
                 </Rectangle>
-                <Run Text="Language" />
+                <Run Text="Latest URL" />
             </TextBlock>
-            <ComboBox Grid.Row="1"
-                      Grid.Column="1"
-                      DisplayMemberPath="Value"
-                      Visibility="Collapsed"
-                      ItemsSource="{Binding Path=ListOfIso6392,
-                                            Mode=OneWay}"
-                      SelectedValue="{Binding Path=ClonedModel.LangCodeIso6392,
-                                              UpdateSourceTrigger=PropertyChanged,
-                                              Mode=TwoWay}"
-                      Text="{Binding Path=ClonedModel.LangCodeIso6392,
-                                     UpdateSourceTrigger=PropertyChanged,
-                                     Mode=TwoWay}" />
+            <DockPanel Grid.Row="3"
+                       Grid.Column="1">
+                <Button DockPanel.Dock="Right" Command="{Binding Path=OpenLatestVersionUrlCommand}">Navigate...</Button>
+                <TextBox MaxLength="200"
+                        Text="{Binding Path=ClonedModel.LatestVersionURL,
+                                    UpdateSourceTrigger=PropertyChanged,
+                                    Mode=TwoWay}" />
+            </DockPanel>
 
-            <TextBlock Grid.Row="2"
-                       Grid.Column="0"
-                       Visibility="Collapsed"
-                       VerticalAlignment="Center">
-                <Rectangle Width="20" Height="15">
-                    <Rectangle.Fill>
-                        <VisualBrush Visual="{iconPacks:FontAwesome Kind=QuestionSolid}" />
-                    </Rectangle.Fill>
-                </Rectangle>
-                <Run Text="Category" />
-            </TextBlock>
-            <ComboBox Grid.Row="2"
-                      Grid.Column="1"
-                      IsEditable="True"
-                      Visibility="Collapsed"
-                      ItemsSource="{Binding Path=PossibleCategories,
-                                            Mode=OneTime}"
-                      Text="{Binding Path=ClonedModel.Category,
-                                     UpdateSourceTrigger=PropertyChanged,
-                                     Mode=TwoWay}" />
-
-            <TextBlock Grid.Row="3"
+            <TextBlock Grid.Row="4"
                        Grid.Column="0"
                        VerticalAlignment="Center">
                 <Rectangle Width="20" Height="20">
@@ -107,7 +82,7 @@
                 </Rectangle>
                 <Run Text="Notes" />
             </TextBlock>
-            <TextBox Grid.Row="3"
+            <TextBox Grid.Row="4"
                      Grid.Column="1"
                      Text="{Binding Path=ClonedModel.NotesToolTip,
                                     UpdateSourceTrigger=PropertyChanged,
@@ -146,11 +121,7 @@
             </TabControl.Resources>
 
             <TabItem Header="How To Install">
-                <StackPanel>
-                    <TextBlock Style="{StaticResource ResourceKey=TextBlockNotesStyle}"
-                               Text="Specify setup location and parameters" />
-                    <Separator />
-
+                <StackPanel ToolTip="Specify setup location and parameters">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
@@ -173,7 +144,8 @@
                         <TextBlock Grid.Row="0"
                                  Grid.Column="1"
                                  Text="{Binding Path=CurrentFolder,
-                                                UpdateSourceTrigger=PropertyChanged}" />
+                                                UpdateSourceTrigger=PropertyChanged}" 
+                                 Foreground="Gray"/>
 
                         <TextBlock Grid.Row="1" Grid.Column="0"><InlineUIContainer>
                                 <Rectangle Width="20" Height="20">
@@ -197,18 +169,20 @@
                                         <VisualBrush Visual="{iconPacks:FontAwesome Kind=BookOpenSolid}" />
                                     </Rectangle.Fill>
                                 </Rectangle>
-                            </InlineUIContainer><Run Text=" Parameters" /></TextBlock>
+                            </InlineUIContainer><Run Text=" Arguments" /></TextBlock>
                         <TextBox Grid.Row="2"
                                  Grid.Column="1"
+
                                  Text="{Binding Path=ClonedModel.SetupSilentParams,
                                                 UpdateSourceTrigger=PropertyChanged,
                                                 Mode=TwoWay}" />
                     </Grid>
 
-                    <Separator />
-
-                    <CheckBox IsChecked="{Binding Path=ClonedModel.IsMsiSetup, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
-                        <TextBlock Text="Is MSI Setup" ToolTip="Required since it is not recommended to run more than single MSI setup at a given time." />
+                    <!--need to find better way to support it.-->
+                    <Separator Visibility="Collapsed" />
+                    <CheckBox Visibility="Collapsed"
+                        IsChecked="{Binding Path=ClonedModel.IsMsiSetup, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
+                        <TextBlock Text="Is MSI Setup" ToolTip="It is not recommended to run more than single MSI setup at a given time." />
                     </CheckBox>
                 </StackPanel>
             </TabItem>
@@ -219,11 +193,7 @@
                 <StackPanel>
                     <GroupBox Header="By File">
 
-                        <StackPanel>
-                            <TextBlock Style="{StaticResource ResourceKey=TextBlockNotesStyle}"
-                               Text="Specify file path to check if this software is installed" />
-                            <Separator />
-
+                        <StackPanel ToolTip="File path to check if this software is already installed">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
@@ -236,7 +206,7 @@
                                 </Grid.RowDefinitions>
 
                                 <TextBlock Grid.Row="0" Grid.Column="0">
-                                    <Run Text="Existence File Path" />
+                                    <Run Text="File Path" />
                                     <LineBreak />
                                     <Run FontSize="7" Text="Use Environment when possible: " />
                                     <LineBreak />
@@ -253,18 +223,19 @@
 
                                 <TextBlock Grid.Row="1"
                                    Grid.Column="0"
-                                   Text="File MD5 Hash" />
-                                <DockPanel Grid.Row="1" Grid.Column="1">
-                                    <TextBox Text="{Binding Path=ClonedModel.ExistenceCheckFileMd5Hash, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                                   Text="File Hash"
+                                   ToolTip="MD5 hash of the selected file"/>
+                                <DockPanel Grid.Row="1" Grid.Column="1"
+                                           ToolTip="MD5 hash of the selected file - auto generated">
+                                    <TextBox Text="{Binding Path=ClonedModel.ExistenceCheckFileMd5Hash, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 
+                                             Foreground="Gray"/>
                                 </DockPanel>
                             </Grid>
                         </StackPanel>
                     </GroupBox>
                     <GroupBox Header="By Registry">
-                        <StackPanel>
-                            <TextBlock Style="{StaticResource ResourceKey=TextBlockNotesStyle}"
-                                       Text="Specify Registry path to check if this software is installed" />
-                            <Separator />
+                        <StackPanel ToolTip="Registry path to check if this software is already installed">
+                            
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />

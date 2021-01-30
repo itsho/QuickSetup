@@ -1,14 +1,16 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
+using GalaSoft.MvvmLight.Messaging;
 using log4net.Config;
 using Microsoft.WindowsAPICodePack.Dialogs;
-using QuickSetup.Logic.Infra;
-using QuickSetup.Logic.Models;
+using QuickSetup.UI.Infra;
+using QuickSetup.UI.Models;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 
@@ -23,20 +25,22 @@ namespace QuickSetup.UI.ViewModel
         private readonly DispatcherTimer _tmrLogRefresh = new DispatcherTimer();
         private SoftwareDirectoryViewModel _selectedSoftwareFolder;
         private AppSettings _qsSettings;
+        private bool _isAdmin;
+        private string _computerDetails;
+        private string _hddStatus;
 
         #endregion data members
 
         #region Ctor
 
-        /// <summary>
-        /// Initializes a new instance of the MainViewModel class.
-        /// </summary>
         public MainViewModel()
         {
             FoldersList = new ObservableCollection<SoftwareDirectoryViewModel>();
             ScanFolderCommand = new RelayCommand(OnScanFolderCommand);
             BrowseWorkingFolderCommand = new RelayCommand(OnBrowseWorkingFolderCommand);
             ClearRecentWorkingFolderCommand = new RelayCommand(OnClearRecentWorkingFolderCommand);
+            CloseAppCommand = new RelayCommand(() => Application.Current.Shutdown());
+            ShowAboutCommand = new RelayCommand(OnShowAboutCommand);
 
             QSSettings = new AppSettings();
             ShowAllFolders = true;
@@ -46,29 +50,27 @@ namespace QuickSetup.UI.ViewModel
             {
                 #region design mode
 
-                //var sub = new SoftwareDirectoryViewModel(QSSettings.WorkingFolder);
-                //sub.Init();
-                //FoldersList.Add(sub);
+                var lstRandomName = "Suspendisse dignissim cursus lectus ut dictum erat porttitor quis Integer nec tincidunt tellus Vestibulum odio libero fringilla quis nunc vel elementum commodo massa Sed luctus vulputate mauris quis varius Morbi eget elit mauris Quisque congue sapien condimentum felis tempus finibus Praesent non molestie enim Quisque gravida".Split(' ');
+                var randGen = new Random();
 
-                //var lstRandomName = Constants.LOREM_IPSUM.Split(' ');
-                //var randGen = new Random();
-                //var lstPossibleCategories = new List<string>() { "Documents", "Graphics", "Dev" };
-
-                //SoftwareList.Add(new SingleSoftwareViewModel(new SingleSoftwareModel()
-                //{
-                //    SoftwareName = lstRandomName[randGen.Next(lstRandomName.Length)],
-                //    NotesToolTip = Constants.LOREM_IPSUM,
-                //    ExistenceRegistryKey = @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion",
-                //    ExistenceRegistryValue = "SM_GamesName",
-                //    LangCodeIso6392 = intTemp % 2 == 0 ? "eng" : "fre",
-                //    IsMsiSetup = intTemp % 3 == 0,
-                //    SetupFolder = @"\\NetworkShare\Setup\Acrobat\Reader",
-                //    SetupFileName = "setup.exe",
-                //    SetupSilentParams = "/q"
-                //},
-                //lstPossibleCategories));
+                FoldersList.Add(new SoftwareDirectoryViewModel(@"C:\")
+                {
+                    OriginalModel =
+                    {
+                        AppName = lstRandomName[randGen.Next(lstRandomName.Length)],
+                        NotesToolTip = lstRandomName[randGen.Next(lstRandomName.Length)],
+                        ExistenceCheckRegistryKey = @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion",
+                        ExistenceCheckRegistryValueName = "SM_GamesName",
+                        SetupFileName = "setup.exe",
+                        SetupSilentParams = "/q"
+                    }
+                });
 
                 Title = Constants.APPLICATIONNAME + " 1.2.3.4";
+
+                IsAdmin = false;
+                ComputerDetails = "I5";
+                HDDStatus = "C: OK, D: failing!";
 
                 #endregion design mode
             }
@@ -93,14 +95,75 @@ namespace QuickSetup.UI.ViewModel
                 InitLog4NetOutputToWindow();
                 LoadAppSettings();
                 ScanFolderCommand.Execute(null);
+                IsAdmin = WinApi32.IsUserAnAdmin();
+                ComputerDetails = HardwareLogic.GetComputerDetails();
+                HDDStatus = HardwareLogic.GetFixedDrivesStatus();
             }
+        }
+
+        private void OnShowAboutCommand()
+        {
+            Messenger.Default.Send(new NotificationMessage<MainViewModel>(this, Constants.MVVM_MESSAGE_SHOW_ABOUTVIEW));
         }
 
         #endregion Ctor
 
         #region Properties
 
+        public bool IsAdmin
+        {
+            get { return _isAdmin; }
+            set
+            {
+                if (_isAdmin != value)
+                {
+                    _isAdmin = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public string ComputerDetails
+        {
+            get
+            {
+                return _computerDetails;
+            }
+            set
+            {
+                if (_computerDetails != value)
+                {
+                    _computerDetails = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public string HDDStatus
+        {
+            get
+            {
+                return _hddStatus;
+            }
+            set
+            {
+                if (_hddStatus != value)
+                {
+                    _hddStatus = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
         public ObservableCollection<SoftwareDirectoryViewModel> FoldersList { get; private set; }
+
+        public bool IsAnySoftwareSelected
+        {
+            get
+            {
+                return SelectedSoftwareFolder != null && SelectedSoftwareFolder.SubDirs.Count == 0;
+            }
+        }
 
         public SoftwareDirectoryViewModel SelectedSoftwareFolder
         {
@@ -111,6 +174,7 @@ namespace QuickSetup.UI.ViewModel
                 {
                     _selectedSoftwareFolder = value;
                     RaisePropertyChanged();
+                    RaisePropertyChanged(nameof(IsAnySoftwareSelected));
                 }
             }
         }
@@ -140,6 +204,10 @@ namespace QuickSetup.UI.ViewModel
                 {
                     QSSettings.IsShowAllFolders = value;
                     RaisePropertyChanged();
+                    if (ScanFolderCommand.CanExecute(null))
+                    {
+                        ScanFolderCommand.Execute(null);
+                    }
                 }
             }
         }
@@ -167,6 +235,10 @@ namespace QuickSetup.UI.ViewModel
         public ICommand BrowseWorkingFolderCommand { get; private set; }
 
         public ICommand ClearRecentWorkingFolderCommand { get; private set; }
+
+        public ICommand CloseAppCommand { get; private set; }
+
+        public ICommand ShowAboutCommand { get; private set; }
 
         public string LogOutputToWindow
         {
@@ -217,7 +289,7 @@ namespace QuickSetup.UI.ViewModel
             catch (Exception ex)
             {
                 Logger.Log.Error("Unable to capture log to screen", ex);
-                AppeandToWindowLog("Unable to capture log to screen. Log won't be availble.");
+                AppendToWindowLog("Unable to capture log to screen. Log won't be availble.");
             }
         }
 
@@ -226,7 +298,7 @@ namespace QuickSetup.UI.ViewModel
             GetLog4NetOutputChunk();
         }
 
-        private void AppeandToWindowLog(string log)
+        private void AppendToWindowLog(string log)
         {
             if (!string.IsNullOrWhiteSpace(log))
             {
@@ -252,7 +324,7 @@ namespace QuickSetup.UI.ViewModel
                 _logbuilderToScreen.Clear();
 
                 // display the chunk we just got
-                AppeandToWindowLog(strConsoleOutput);
+                AppendToWindowLog(strConsoleOutput);
             }
             catch (Exception ex)
             {

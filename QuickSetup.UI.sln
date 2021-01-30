@@ -1,11 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30717.126
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuickSetup.UI", "QuickSetup.UI\QuickSetup.UI.csproj", "{FB06B58C-56D5-4953-8D50-8E3BFE80723E}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuickSetup.Logic", "QuickSetup.Logic\QuickSetup.Logic.csproj", "{57CD90FA-E8AD-4583-8DE4-EEE693456B73}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,12 +15,11 @@ Global
 		{FB06B58C-56D5-4953-8D50-8E3BFE80723E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FB06B58C-56D5-4953-8D50-8E3BFE80723E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FB06B58C-56D5-4953-8D50-8E3BFE80723E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{57CD90FA-E8AD-4583-8DE4-EEE693456B73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{57CD90FA-E8AD-4583-8DE4-EEE693456B73}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{57CD90FA-E8AD-4583-8DE4-EEE693456B73}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{57CD90FA-E8AD-4583-8DE4-EEE693456B73}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {87BB34CE-1974-4C50-9E3B-B2EEC46BE9E5}
 	EndGlobalSection
 EndGlobal
