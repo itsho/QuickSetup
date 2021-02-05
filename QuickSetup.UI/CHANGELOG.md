@@ -8,8 +8,8 @@
 - BUG: log is uncollapsable in small screens
 	- limit log size on window
 - do not allow add QS for a folder with subfolders
-
-- add "remove uninstall links from start menu"
+- get icon from setup file (when possible)
+- add "remove uninstall links from start menu" PS1
 - if no "detection method" exist (file/reg), hide the "status" line or mark as "unavailable"
 - edit button have it's own color
 - save button to text and with color
