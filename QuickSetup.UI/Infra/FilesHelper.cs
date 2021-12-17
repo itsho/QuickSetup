@@ -60,15 +60,20 @@ namespace QuickSetup.UI.Infra
                 {
                     var fileContent = File.ReadAllText(Constants.AppsFileFullPath);
                     var model = JsonConvert.DeserializeObject<AppSettings>(fileContent);
-                    Logger.Log.Info("AppSettings was loaded from file");
-
-                    return model;
+                    
+                    // make sure the settings are OK
+                    if (!string.IsNullOrEmpty(model.WorkingFolder))
+                    {
+                        Logger.Log.Info("AppSettings was loaded from file");
+                        return model;
+                    }
                 }
             }
             catch (Exception ex)
             {
                 Logger.Log.Error("Internal error - Unable to load appSettings from file", ex);
             }
+            Logger.Log.Info("loading default empty AppSettings");
             return new AppSettings();
         }
 
